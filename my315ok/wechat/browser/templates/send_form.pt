@@ -1,0 +1,44 @@
+<form method="POST"
+      i18n:domain="my315ok.wechat"
+      tal:define="values view/get_values"
+      tal:attributes="action python: context.absolute_url() + '/send_as_wechat'">
+
+  <div id="field_title"
+       tal:attributes="class python: view.class_for_field('title')">
+    <label for="title"
+           i18n:translate="label_title">Mail's title</label>
+    <span class="fieldRequired"
+          title="Required"
+          i18n:domain="plone"
+          i18n:translate="title_required">(Required)</span>
+    <br />
+
+    <div id="error_title"
+         tal:attributes="class python: view.show_error_message('title') and '' or 'dont-show'"
+         i18n:translate="error_empty_title">
+    You have to specify a title for the e-mail.</div>
+
+    <input type="text"
+           id="title"
+           name="title"
+           size="25"
+           tal:attributes="value values/title | nothing" />
+  </div>
+
+
+
+
+
+  <div class="formControls">
+    <input type="submit"
+           class="context"
+           value="Send"
+           name="form_submitted"
+           i18n:attributes="value label_send"/>
+    <input class="standalone"
+           type="submit"
+           value="Cancel"
+           name="form_cancelled"
+           i18n:attributes="value label_cancel" />
+  </div>
+</form>

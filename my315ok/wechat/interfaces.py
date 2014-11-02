@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import zope.interface 
+from zope import schema
+from my315ok.wechat import MessageFactory as _
 
 class IMessage(zope.interface.Interface):
     """
@@ -88,6 +90,26 @@ class ICheckSignature(zope.interface.Interface):
 3. 开发者获得加密后的字符串可与signature对比，标识该请求来源于微信
 
             """   
-    
+class Iweixinapi(zope.interface.Interface):
+    """
+    api marker interface
+    """    
         
-                 
+class IwechatSettings(zope.interface.Interface):
+    """Describes registry records
+    """
+    
+    appid = schema.ASCII(
+            title=_(u"app id"),
+            description=_(u"weixin app id"),
+        )
+    appsecret = schema.ASCII(
+                             title=_(u"app secret"),
+                             description=_(u"weixin app secret"),
+                             )
+    
+class ISendWechatEvent(zope.interface.Interface):
+    """
+    a send wechat event mark interface.
+    """    
+                     

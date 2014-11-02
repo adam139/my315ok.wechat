@@ -7,6 +7,7 @@ import six
 import time
 from hashlib import sha1
 
+from my315ok.wechat.interfaces import ICheckSignature
 string_types = (six.string_types, six.text_type, six.binary_type)
 
 

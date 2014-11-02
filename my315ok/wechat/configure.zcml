@@ -3,10 +3,27 @@
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:grok="http://namespaces.zope.org/grok"
+    xmlns:browser="http://namespaces.zope.org/browser"         
     i18n_domain="my315ok.wechat">
 
-  <five:registerPackage package="." initialize=".initialize" />
-
+    <!-- Include configuration for dependencies listed in setup.py -->
+    <includeDependencies package="." />
+    <!-- Grok the package to initialise schema interfaces and content classes -->
+    <grok:grok package="." />
+<adapter
+    factory="my315ok.wechat.weixinapi.Client"
+    provides=".interfaces.Iweixinapi"
+    for="Products.CMFCore.interfaces.IContentish"
+    /> 
+    
+  <!-- Register the control panel for My315ok wechat settings -->
+  <browser:page
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      name="my315okwechat-controlpanel"
+      class=".controlpanel.WechatControlPanelView"
+      permission="cmf.ManagePortal" 
+      />    
   <genericsetup:registerProfile
       name="default"
       title="my315ok.wechat"

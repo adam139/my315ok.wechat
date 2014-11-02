@@ -25,14 +25,26 @@ setup(name='my315ok.wechat',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'plone.app.registry',           
+          'plone.app.dexterity',
+          'plone.directives.form',
+          'plone.app.z3cform',
+          'five.globalrequest',
+          'five.grok',
+          'requests',
+          'six',
+          'PIL',          
           # -*- Extra requirements: -*-
       ],
+      extras_require={
+          'test': ['plone.app.testing',]
+      },         
       entry_points="""
       # -*- Entry points: -*-
 
       [z3c.autoinclude.plugin]
       target = plone
       """,
-      setup_requires=["PasteScript"],
-      paster_plugins=["ZopeSkel"],
+#      setup_requires=["PasteScript"],
+#      paster_plugins=["ZopeSkel"],
       )

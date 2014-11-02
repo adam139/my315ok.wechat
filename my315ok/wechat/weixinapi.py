@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
+from five import grok
+from zope.annotation.interfaces import IAnnotations
+from zope.annotation.interfaces import IAttributeAnnotatable
+from zope.interface import alsoProvides, implements
+from zope.component import adapts 
+
+from Products.CMFCore.interfaces import IContentish
+from Products.ATContentTypes.interfaces import IATNewsItem
+from my315ok.wechat.interfaces import Iweixinapi
 
 import time
 import requests
-
+#from cStringIO import StringIO
+#from PIL import Image
 
 from requests.compat import json as _json
-from werobot.utils import to_text
+from my315ok.wechat.utilities import to_text
 
 
 class ClientException(Exception):
@@ -21,13 +31,22 @@ def check_error(json):
         raise ClientException("{}: {}".format(json["errcode"], json["errmsg"]))
     return json
 
+appid = "wx2833460b1571bd01"
+appsecret = "7266d775b7661c4308b143c69d8eabc2"
+appid ="wx77d2f3625808f911"
+appsecret = "b66e860a24452f782dc40d3daab6a79a"
 
 class Client(object):
     """
     微信 API 操作类
     通过这个类可以方便的通过微信 API 进行一系列操作，比如主动发送消息、创建自定义菜单等
     """
-    def __init__(self, appid, appsecret):
+    implements(Iweixinapi)
+    adapts(IContentish)
+    def __init__(self, context):
+
+        self.cotext = context
+#        annotations = IAnnotations(context)
         self.appid = appid
         self.appsecret = appsecret
         self._token = None
@@ -339,6 +358,8 @@ class Client(object):
             }
         )
 
+    
+    
     def send_voice_message(self, user_id, media_id):
         """
         发送语音消息
@@ -476,3 +497,75 @@ class Client(object):
                 "ticket": ticket
             }
         )
+        
+#     http://mp.weixin.qq.com/wiki/index.php?title=高级群发接口   
+    def upload_news(self,data):
+        """
+        上传图文消息
+        详情请参考 
+        http://mp.weixin.qq.com/wiki/index.php?title=高级群发接口
+        post数据：
+                {"articles": [
+                                 {"thumb_media_id":"qI6_Ze_6PtV7svjolgs-rN6stStuHIjs9_DidOHaj0Q-mwvBelOXCFZiq2OsIU-p",
+                                  "author":"xxx",
+                                  "title":"Happy Day",
+                                  "content_source_url":"www.qq.com",
+                                  "content":"content",
+                                  "digest":"digest",
+                                  "show_cover_pic":"1"}
+                                  ]
+                                  }
+                                  
+
+        
+        :param articles: 一个包含至多10个 :class:`Article` 实例的数组
+        
+        :return: 返回的 JSON 数据包        
+        https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=ACCESS_TOKEN
+        """
+#        data ={}
+#        data = data.append(articles)
+        rt = self.post(
+            url="https://api.weixin.qq.com/cgi-bin/media/uploadnews",
+            data=data)
+        rt = check_error(rt)
+        return rt["media_id"]
+        
+    def sendnews_by_group(self,data):
+            """
+            高级群发，安分组发送
+            发送图文消息
+        post 数据：
+            {
+       "filter":{"group_id":"2"},
+       "mpnews":{"media_id":"123dsdajkasd231jhksad"},
+       "msgtype":"mpnews"}
+           发送文本消息：
+       post 数据：
+              {"filter":{"group_id":"2"},
+               "text":{"content":"CONTENT"},
+               "msgtype":"text"}
+       
+        post URL:https://api.weixin.qq.com/cgi-bin/message/mass/sendall
+            
+            """
+            url = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall"
+            self.post(url=url,data=data)
+            
+    def send_by_openid(self,data):
+        """
+        高级群发，依据openid序列发送
+        发送图文消息
+        data格式：
+                {"touser":["OPENID1","OPENID2"],
+                 "mpnews":{"media_id":"123dsdajkasd231jhksad"},
+                 "msgtype":"mpnews"}
+        """
+        
+        url="https://api.weixin.qq.com/cgi-bin/message/mass/send"
+        self.post(url=url,data=data)
+            
+            
+            
+            
+            
