@@ -3,8 +3,8 @@
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="here/main_template/macros/master"
-      xml:lang="en"
-      lang="en"
+      xml:lang="zh-cn"
+      lang="zh-cn"
       i18n:domain="my315ok.wechat">
   <metal:headslot fill-slot="head_slot">
     <meta name="robots" content="noindex" />
@@ -15,7 +15,36 @@
         <span tal:replace="here/pretty_title_or_id"
               class="documentFirstHeading">Title or id</span>
       </h1>
-      <div tal:replace="structure context/@@send_as_wechat_form" />
+      <div>
+      	<div id="send_success" style="display:none">已成功发送微信</div>
+      	<div id="ajaxsend" style="display: none" 
+      		tal:attributes="data-ajax-target string:${portal_url}/@@ajax_send_weixin;
+      		data-ajax-id context/id"></div>
+      </div>
+		<div>
+			<button id="send" class="btn btn-default btn-lg" type="button" data-toggle="dropdown">发送微信</button>
+		</div>
     </div>
+  <metal:js fill-slot="javascript_bottom_slot">
+		<script type="text/javascript">
+		function sendchat() {        
+     var action = $("#ajaxsend").attr('data-ajax-target');
+     var id = $("#ajaxsend").attr('data-ajax-id');
+     var senddata = {"id":id}	;
+     $.post(action, 
+           senddata,
+           function(data) {
+           	if (data['info']==1) {$("#send_success").show();}
+            },
+            'json');
+}
+$(document).ready(function(){
+$("#send").on("click",function() {
+                    sendchat();
+                    return false;      
+})      
+})	  	
+	</script>
+	</metal:js>
   </body>
 </html>

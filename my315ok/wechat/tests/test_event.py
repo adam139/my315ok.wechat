@@ -15,6 +15,7 @@ from my315ok.wechat.events import SendWechatEvent
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 from my315ok.wechat.tests.test_api import setupbase
+
 class TestEvent(setupbase):
     
     layer = INTEGRATION_TESTING

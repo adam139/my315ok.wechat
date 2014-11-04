@@ -1,18 +1,10 @@
 from five import grok
 from plone.directives import dexterity, form
-
+from plone.indexer import indexer
 from zope import schema
-from zope.schema.interfaces import IContextSourceBinder
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+from Products.CMFCore.utils import getToolByName
 
-from zope.interface import invariant, Invalid
-
-from z3c.form import group, field
-
-
-from plone.app.textfield import RichText
-
-
+from my315ok.wechat import MessageFactory as _
 
 from zope.component import getUtility
 from zope.component.hooks import getSite
@@ -24,55 +16,44 @@ from collective.dexteritytextindexer.behavior import IDexterityTextIndexer
 
 class IMenu(form.Schema):
     """
-    A conference event
+    A menu
     """
-    dexteritytextindexer.searchable('title')
-    title = schema.TextLine(title=_(u"Title"))
-    dexteritytextindexer.searchable('description')    
-    description = schema.Text(title=_(u"Summary"), required=True)
+#    dexteritytextindexer.searchable('title')
+#    title = schema.TextLine(title=_(u"Name"))
 
-    sponsor = schema.TextLine(title=_(u"Sponsor"))
     menu_type = schema.Choice(
-        title=_(u"Conference Type"),
-        vocabulary="collective.conference.vocabulary.conferencetype"
+        title=_(u"menu type"),
+        vocabulary="my315ok.wechat.vocabulary.menutype"
     )    
-    province = schema.Choice(
-        title=_(u"province"),
-        vocabulary="dexterity.membrane.vocabulary.province"
-    )  
-    address = schema.TextLine(title=_(u"Address"))   
-    form.widget(rooms='plone.z3cform.textlines.TextLinesFieldWidget')
-    rooms = schema.List(
-        title=_(u"Available Rooms"),
-        value_type=schema.TextLine()
-    )
-    participants = schema.List(
-        title=_(u"Participants list"),
-        value_type=schema.TextLine()
-    )  
-    speakers = schema.List(
-        title=_(u"speakers list"),
-        value_type=schema.TextLine()
-    )  
+    istopmenu = schema.Choice(
+        title=_(u"is top menu?"),
+        vocabulary="my315ok.wechat.vocabulary.istopmenu",
+        default='0'
+    )      
+    key = schema.TextLine(title=_(u"key value of the menu"))
+ 
+    url = schema.TextLine(title=_(u"the menu link to url"))
+       
+
     
-    form.omitted('participants','speakers')  
+#    form.omitted('description')  
 # Custom content-type class; objects created for this content type will
 # be instances of this class. Use this class to add content-type specific
 # methods and properties. Put methods that are mainly useful for rendering
 # in separate view classes.
 
-class Conference(dexterity.Container):
-    grok.implements(IConference)
-    grok.provides(IConference)
+class Menu(dexterity.Container):
+    grok.implements(IMenu)
+    grok.provides(IMenu)
     
     # Add your class methods and properties here
 
-    def getConference(self):
-        site = getSite()
-        parent = self
-        while parent != site:
-            if IConference.providedBy(parent):
-                return parent
-            parent = aq_parent(parent)
-        return None
 
+
+@indexer(IMenu)
+def istopmenu(context):
+    """Create a catalogue indexer, registered as an adapter, which can
+    populate the ``content`` index with the answer .
+    """
+#    context = aq_inner(context)
+    return context.istopmenu

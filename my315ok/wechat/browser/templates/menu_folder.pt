@@ -1,0 +1,49 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="my315ok.products">
+  <metal:headslot fill-slot="head_slot">
+    <meta name="robots" content="noindex" />
+  </metal:headslot>      
+<body>
+	<metal:main fill-slot="main">
+    <tal:main-macro metal:define-macro="main">		
+ 			<div class="container">
+      	<div id="success" class="row" style="display:none">已成功创建微信菜单</div>
+      	<div id="ajaxcreate" style="display: none" 
+      		tal:attributes="data-ajax-target python:context.absolute_url() + '/@@ajax_create_menu';
+      		data-ajax-id context/id"></div>				
+      <div class="row" tal:content="structure python:view.out_menus()">         
+		 </div>
+		 <div class="row">
+			<button id="createmenu" class="btn btn-default btn-lg" type="button" data-toggle="dropdown">创建菜单</button>		 	
+		 </div>
+		 </div>	
+    </tal:main-macro>
+</metal:main>
+  <metal:js fill-slot="javascript_bottom_slot">
+		<script type="text/javascript">
+		function sendchat() {        
+     var action = $("#ajaxcreate").attr('data-ajax-target');
+     var id = $("#ajaxcreate").attr('data-ajax-id');
+     var senddata = {"id":id}	;
+     $.post(action, 
+           senddata,
+           function(data) {
+           	if (data['info']==0) {$("#success").show();}
+            },
+            'json');
+}
+$(document).ready(function(){
+$("#createmenu").on("click",function() {
+                    sendchat();
+                    return false;      
+})      
+})	  	
+	</script>
+	</metal:js>
+</body>
+</html>

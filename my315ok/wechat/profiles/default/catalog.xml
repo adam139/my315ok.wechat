@@ -1,0 +1,7 @@
+<object name="portal_catalog">
+    <index name="istopmenu" meta_type="FieldIndex">
+        <indexed_attr value="istopmenu"/>
+    </index>	
+    <column value="istopmenu"/>
+  
+</object>

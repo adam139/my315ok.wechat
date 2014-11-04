@@ -3,40 +3,13 @@
    xmlns:browser="http://namespaces.zope.org/browser"
    i18n_domain="my315ok.wechat">
 
-  <browser:resource
-      name="jquery.sendaspdf.js"
-      file="jscript/jquery.sendaspdf.js"
-      />
-
-
-
   <!-- Page called when clicking on 'Send as Wechat' -->
   <browser:page
       for="*"
       name="send_as_wechat"
+      class=".send.SendForm"
       template="templates/send_page.pt"
       permission="zope2.View"
       />
-
-  <!-- Content of the previous page -->
-  <browser:page
-      for="*"
-      name="send_as_wechat_form"
-      class=".send.SendForm"
-      template="templates/send_form.pt"
-      permission="zope2.View"
-      />
-
-
-
-  <!-- Page used in portal actions to get the real url
-      of the current page (including GET parameters). -->
-  <browser:page
-      for="*"
-      name="send_as_wechat_real_url"
-      class=".realurl.RealURLView"
-      permission="zope2.View"
-      />
-
 
 </configure>

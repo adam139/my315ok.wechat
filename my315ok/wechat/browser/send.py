@@ -1,9 +1,9 @@
 from zope.i18n import translate
-from Products.validation import validation
+
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
 
-#from my315ok.wechat.emailer import send_message
+
 
 from my315ok.wechat import MessageFactory as _
 from my315ok.wechat.browser.base import BaseView
@@ -22,26 +22,8 @@ class SendForm(BaseView):
     called with a simple GET request.
     """
 
-
     def __call__(self):
-        form = self.request.form
 
-        if 'form_submitted' in form:
-            # The user clicked on the 'send by mail'
-            # button.
-
-            msg = _(u'msg_success',
-                        default=u'The message has been sent')
-            msg_type = 'info'
-
-
-            self.context.plone_utils.addPortalMessage(
-                translate(msg,
-                          target_language=self.get_lang()),
-                type=msg_type)
-
-
-        elif 'form_cancelled' in form:
-            # The user clicked on the 'cancel' button.
-            self.request.response.redirect(self.context.absolute_url())
-
+        self.index = ZopeTwoPageTemplateFile('templates/send_page.pt')
+            # We need the self parameter for Plone 4
+        return self.index(self)
