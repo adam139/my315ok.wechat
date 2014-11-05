@@ -4,7 +4,7 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       lang="en"
       metal:use-macro="context/main_template/macros/master"
-      i18n:domain="my315ok.products">
+      i18n:domain="my315ok.wechat">
   <metal:headslot fill-slot="head_slot">
     <meta name="robots" content="noindex" />
   </metal:headslot>      
@@ -19,7 +19,18 @@
       <div class="row" tal:content="structure python:view.out_menus()">         
 		 </div>
 		 <div class="row">
-			<button id="createmenu" class="btn btn-default btn-lg" type="button" data-toggle="dropdown">创建菜单</button>		 	
+		 	<div class="col-xs-4" tal:define="iseditable python:view.isEditable">
+			<button tal:condition="iseditable" id="createmenu" class="btn btn-default btn-lg" type="button">创建微信菜单</button>		 	
+		 </div>
+		 <div class="col-xs-4" tal:define="confolder python:view.getMenuFolder()">
+		<span class="overlay" tal:condition="confolder">
+			<a tal:attributes="href  python:confolder + '/++add++my315ok.wechat.content.menu'" 
+				title="Add menu item"
+				i18n:attributes="title"
+				class="btn btn-primary" 
+				i18n:translate="">Add menu item</a>
+		</span>
+	</div>
 		 </div>
 		 </div>	
     </tal:main-macro>

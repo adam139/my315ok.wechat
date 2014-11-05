@@ -112,8 +112,8 @@ class AjaxCreate(grok.View):
             menu_data['button'].append(topitem)
             
         catalog = getToolByName(self.context, 'portal_catalog')
-        import pdb
-        pdb.set_trace()
+#        import pdb
+#        pdb.set_trace()
         # get a menu item
         brains = catalog({'object_provides': IATNewsItem.__identifier__,
                                   'limit': 1})

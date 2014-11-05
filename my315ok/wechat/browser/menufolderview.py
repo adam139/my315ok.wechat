@@ -51,6 +51,18 @@ class MenufolderView(grok.View):
     def isEditable(self):
         return self.pm().checkPermission(permissions.ManagePortal,self.context) 
 
+    @memoize         
+    def getMenuFolder(self):
+
+        topicfolder = self.catalog()({'object_provides': IMenufolder.__identifier__})
+
+        canManage = self.pm().checkPermission(permissions.AddPortalContent,self.context)        
+        if (len(topicfolder) > 0) and  canManage:
+            tfpath = topicfolder[0].getURL()
+        else:
+            tfpath = None            
+        return tfpath  
+
         
     @memoize         
     def get_top_menu(self):

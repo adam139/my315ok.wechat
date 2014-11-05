@@ -182,8 +182,31 @@ class Allcontents(setupbase):
         
         self.api.send_by_openid(data)
 #        self.assertEqual(imgobj,getFile('image.jpg').read())
-       
+       # 二维码测试
+    def test_qrcode(self):
+        """first create forever qrcode,second generate a qrcode image.
+        data:{"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 123}}}
+        """
+
+        data = {"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 123}}}
+        qr = self.api.create_qrcode(data)
+        try:
+            ticket=check_error(qr)['ticket']
+            import pdb
+            pdb.set_trace()
+            rt = self.api.show_qrcode(ticket)
+            # image data
+            virf = StringIO(rt.content)
+            imgobj = Image.open(virf)
+            filename = "qrcode.jpg" 
+            imgfile = putFile(filename)
+            imgobj.save(imgfile)
+
+        except:
+            raise Exception("show qrcode error")
         
+        
+                
       
     
         

@@ -33,6 +33,11 @@ def check_error(json):
 
 appid = "wx2833460b1571bd01"
 appsecret = "7266d775b7661c4308b143c69d8eabc2"
+
+
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
+from my315ok.wechat.interfaces import IwechatSettings
 appid ="wx77d2f3625808f911"
 appsecret = "b66e860a24452f782dc40d3daab6a79a"
 
@@ -46,9 +51,17 @@ class Client(object):
     def __init__(self, context):
 
         self.cotext = context
-#        annotations = IAnnotations(context)
-        self.appid = appid
-        self.appsecret = appsecret
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IwechatSettings)
+
+        if settings.appid == None:
+            self.appid = appid
+        else:
+            self.appid = settings.appid
+        if settings.appsecret == None:
+            self.appsecret = appsecret
+        else:
+            self.appsecret = settings.appsecret
         self._token = None
         self.token_expires_at = None
 
@@ -470,7 +483,7 @@ class Client(object):
             }
         )
 
-    def create_qrcode(self, **data):
+    def create_qrcode(self, data):
         """
         创建二维码
         详情请参考 http://mp.weixin.qq.com/wiki/index.php?title=生成带参数的二维码

@@ -17,8 +17,8 @@ def sendnews(obj, event):
         api = Iweixinapi(obj)
     # create articles data
         text = obj.getText()
-        import pdb
-        pdb.set_trace()
+#        import pdb
+#        pdb.set_trace()
         imgobj = StringIO(obj.getImage().data)
 
         imgobj = Image.open(imgobj)
