@@ -16,13 +16,16 @@
               class="documentFirstHeading">Title or id</span>
       </h1>
       <div>
-      	<div id="send_success" style="display:none">已成功发送微信</div>
+      	<div id="send_success" class="row" style="display:none">
+      		<div class="col-xs-12"><span class="text-success">已成功发送微信</span></div>
+      	</div>
+
       	<div id="ajaxsend" style="display: none" 
       		tal:attributes="data-ajax-target string:${portal_url}/@@ajax_send_weixin;
       		data-ajax-id context/id"></div>
       </div>
 		<div>
-			<button id="send" class="btn btn-default btn-lg" type="button" data-toggle="dropdown">发送微信</button>
+			<button id="send" class="btn btn-primary" type="button" data-toggle="dropdown">发送微信</button>
 		</div>
     </div>
   <metal:js fill-slot="javascript_bottom_slot">

@@ -12,15 +12,19 @@
 	<metal:main fill-slot="main">
     <tal:main-macro metal:define-macro="main">		
  			<div class="container">
-      	<div id="success" class="row" style="display:none">已成功创建微信菜单</div>
-      	<div id="ajaxcreate" style="display: none" 
+      	<div id="success" class="row" style="display:none">
+      		<div class="col-xs-12"><span class="text-success">已成功创建微信菜单</span></div>
+      	</div>
+      	<div id="ajaxcreate" class="hidden" 
       		tal:attributes="data-ajax-target python:context.absolute_url() + '/@@ajax_create_menu';
       		data-ajax-id context/id"></div>				
-      <div class="row" tal:content="structure python:view.out_menus()">         
+      <div class="row">
+      	<div class="col-xs-12" tal:content="structure python:view.out_menus()">      	
+      </div>         
 		 </div>
 		 <div class="row">
 		 	<div class="col-xs-4" tal:define="iseditable python:view.isEditable">
-			<button tal:condition="iseditable" id="createmenu" class="btn btn-default btn-lg" type="button">创建微信菜单</button>		 	
+			<button tal:condition="iseditable" id="createmenu" class="btn btn-primary" type="button">创建微信菜单</button>		 	
 		 </div>
 		 <div class="col-xs-4" tal:define="confolder python:view.getMenuFolder()">
 		<span class="overlay" tal:condition="confolder">
@@ -30,7 +34,8 @@
 				class="btn btn-primary" 
 				i18n:translate="">Add menu item</a>
 		</span>
-	</div>
+	   </div>
+		 <div class="col-xs-4"></div>
 		 </div>
 		 </div>	
     </tal:main-macro>
