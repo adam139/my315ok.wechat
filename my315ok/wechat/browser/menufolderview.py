@@ -127,9 +127,7 @@ class MenufolderView(grok.View):
                 out = head + top + submenu            
             else:
                 tail = """</div>"""
-                top = """<button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
-            %s
-            </button>""" % i.Title
+                top = """<button class="btn" type="button"><a href="%s">%s</a></button>""" % (i.getURL(),i.Title)
                 out = head + top + tail
             output = output + out
 #        import pdb
