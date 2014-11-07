@@ -6,7 +6,7 @@ from Products.ATContentTypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import Iweixinapi
 from my315ok.wechat.events import ISendWechatEvent
 from my315ok.wechat.weixinapi import check_error
-from my315ok.wechat.tests.test_api import putFile
+from my315ok.wechat.tests.test_api import putFile,getFile
 
 from cStringIO import StringIO
 from PIL import Image
@@ -19,16 +19,20 @@ def sendnews(obj, event):
         text = obj.getText()
 #        import pdb
 #        pdb.set_trace()
-        imgobj = StringIO(obj.getImage().data)
-
-        imgobj = Image.open(imgobj)
-        filename = "news.%s" % (imgobj.format).lower()
-        imgfile = putFile(filename)
-        imgobj.save(imgfile)
+        try:
+            imgobj = StringIO(obj.getImage().data)
+            imgobj = Image.open(imgobj)
+            suffix = (imgobj.format).lower()
+            filename = "news.%s" % suffix
+            imgfile = putFile(filename)
+            imgobj.save(imgfile)
+            del imgobj
 #        imgobj = getFile('image.jpg')
-        filename = open(imgfile,'r')
+            filename = open(imgfile,'r')
+        except:
+            filename = getFile("avatar_default.jpg")
         rt = api.upload_media('image',filename)
-        del imgobj
+
         filename.close()
         rt = check_error(rt)
         mid = rt["media_id"]
