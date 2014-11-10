@@ -245,7 +245,16 @@ class Recieve(grok.View):
     grok.name('receive_weixin')
     grok.require('zope2.View')
 
-    def abort(status):
+
+    
+    def render(self):
+        data = self.request.form
+        ev = self.request.environ
+        import pdb
+        pdb.set_trace
+        robot = BaseRoBot(token="plone2018")
+        
+    def abort(self,status):
         template ="""            
     <!DOCTYPE html>
     <html>
@@ -264,14 +273,8 @@ class Recieve(grok.View):
             <p>微信机器人不可以通过 GET 方式直接进行访问。</p>
         </body>
     </html>
-    """ % (status,status)
-    
-    def render(self):
-        data = self.request.form
-        ev = self.request.environ
-        import pdb
-        pdb.set_trace
-        robot = BaseRoBot(token="plone2018")
+    """ % (status,status)        
+        
         @robot.text
         def echo(message):
             a1 = ArticlesReply(message=message,star=True,MsgType="news",ArticleCount=1)
