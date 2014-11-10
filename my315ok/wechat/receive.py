@@ -245,14 +245,6 @@ class Recieve(grok.View):
     grok.name('receive_weixin')
     grok.require('zope2.View')
 
-
-    
-    def render(self):
-        data = self.request.form
-        ev = self.request.environ
-        import pdb
-        pdb.set_trace
-        robot = BaseRoBot(token="plone2018")
         
     def abort(self,status):
         template ="""            
@@ -273,7 +265,15 @@ class Recieve(grok.View):
             <p>微信机器人不可以通过 GET 方式直接进行访问。</p>
         </body>
     </html>
-    """ % (status,status)        
+    """ % (status,status) 
+        return template    
+    
+    def render(self):
+        data = self.request.form
+        ev = self.request.environ
+
+        robot = BaseRoBot(token="plone2018")
+   
         
         @robot.text
         def echo(message):
@@ -281,30 +281,25 @@ class Recieve(grok.View):
             item = Article(title=u"Plone技术论坛",img="",description="最大的中文Plone技术社区",url="http://plone.315ok.org/")
             a1.add_article(item)
             return a1         
-
+        try:
+            rn = robot.check_signature(
+            data["timestamp"],
+            data["nonce"],
+            data["signature"]
+            )
+        except:
+            return self.abort(403)
+            
         if ev['REQUEST_METHOD'] =="GET":
             # valid request from weixin
-            try:
-                rn = robot.check_signature(
-                data["timestamp"],
-                data["nonce"],
-                data["signature"]
-            )
-                if rn:
-                    return data["echostr"]
-                else:
-                    return self.abort(403)                 
-            except:
-                return self.abort(403)
-           
+            if rn:
+                return data["echostr"]
+            else:
+                return self.abort(403)           
             
         else:
             # normal request form weixin
-            if not robot.check_signature(
-                data["timestamp"],
-                data["nonce"],
-                data["signature"]
-            ):
+            if not rn:
                 return self.abort(403)
             import pdb
             pdb.set_trace()
