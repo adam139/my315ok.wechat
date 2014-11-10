@@ -304,7 +304,7 @@ class Recieve(grok.View):
                 return self.abort(403)
 #            import pdb
 #            pdb.set_trace()
-            body = data["data"]
+            body =  self.request.get('BODY')
 # 分析原始xml，返回名类型message实例            
             message = parse_user_msg(body)
             logging.info("Receive message %s" % message)
