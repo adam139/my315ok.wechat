@@ -277,6 +277,7 @@ class Recieve(grok.View):
         
         @robot.text
         def echo(message):
+            return "haha"
             a1 = ArticlesReply(message=message,star=True,MsgType="news",ArticleCount=1)
             item = Article(title=u"Plone技术论坛",img="",description="最大的中文Plone技术社区",url="http://plone.315ok.org/")
             a1.add_article(item)
@@ -301,8 +302,8 @@ class Recieve(grok.View):
             # normal request form weixin
             if not rn:
                 return self.abort(403)
-            import pdb
-            pdb.set_trace()
+#            import pdb
+#            pdb.set_trace()
             body = data["data"]
 # 分析原始xml，返回名类型message实例            
             message = parse_user_msg(body)
