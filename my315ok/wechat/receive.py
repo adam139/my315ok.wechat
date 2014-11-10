@@ -32,7 +32,7 @@ __all__ = ['BaseRoBot', 'WeRoBot']
 
 
 _DEFAULT_CONFIG = dict(
-    Teken="plne2018"
+    TOKEN="plone2018"
 )
 
 
@@ -230,6 +230,7 @@ class BaseRoBot(object):
 
     def check_signature(self, timestamp, nonce, signature):
         sign = [self.config["TOKEN"], timestamp, nonce]
+
         sign.sort()
         sign = to_binary(''.join(sign))
         sign = hashlib.sha1(sign).hexdigest()
@@ -242,40 +243,61 @@ class Recieve(grok.View):
     
     grok.context(INavigationRoot)
     grok.name('receive_weixin')
-    grok.require('zope2.View')       
+    grok.require('zope2.View')
 
-
-    robot = BaseRoBot()
-    @robot.text
-    def echo(message):
-        a1 = ArticlesReply(message=message,star=True,MsgType="news",ArticleCount=1)
-        item = Article(title=u"Plone技术论坛",img="",description="最大的中文Plone技术社区",url="http://plone.315ok.org/")
-        a1.add_article(item)
-        return a1 
-
-
+    def abort(status):
+        template ="""            
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf8" />
+            <title>Error: %s</title>
+            <style type="text/css">
+              html {background-color: #eee; font-family: sans;}
+              body {background-color: #fff; border: 1px solid #ddd;
+                    padding: 15px; margin: 15px;}
+              pre {background-color: #eee; border: 1px solid #ddd; padding: 5px;}
+            </style>
+        </head>
+        <body>
+            <h1>Error: %s</h1>
+            <p>微信机器人不可以通过 GET 方式直接进行访问。</p>
+        </body>
+    </html>
+    """ % (status,status)
     
     def render(self):
         data = self.request.form
-        if data['REQUEST_METHOD'] =="GET":
+        ev = self.request.environ
+        robot = BaseRoBot(token="plone2018")
+        @robot.text
+        def echo(message):
+            a1 = ArticlesReply(message=message,star=True,MsgType="news",ArticleCount=1)
+            item = Article(title=u"Plone技术论坛",img="",description="最大的中文Plone技术社区",url="http://plone.315ok.org/")
+            a1.add_article(item)
+            return a1         
+
+        if ev['REQUEST_METHOD'] =="GET":
             # valid request from weixin
-            if not self.check_signature(
+            if not robot.check_signature(
                 data["timestamp"],
                 data["nonce"],
                 data["signature"]
             ):
-                return abort(403)
+                return self.abort(403)
             return data["echostr"]            
             
         else:
             # normal request form weixin
-            if not self.check_signature(
+            if not robot.check_signature(
                 data["timestamp"],
                 data["nonce"],
                 data["signature"]
             ):
-                return abort(403)
-            body = request.body.read()
+                return self.abort(403)
+            import pdb
+            pdb.set_trace()
+            body = data["data"]
 # 分析原始xml，返回名类型message实例            
             message = parse_user_msg(body)
             logging.info("Receive message %s" % message)
@@ -286,7 +308,7 @@ class Recieve(grok.View):
                                     % message)
                 return ''
 #设置返回文档头            
-            response.content_type = 'application/xml'
+            self.request.response.content_type = 'application/xml'
 #创建回复消息             
             return create_reply(reply, message=message)
 
