@@ -269,6 +269,8 @@ class Recieve(grok.View):
     def render(self):
         data = self.request.form
         ev = self.request.environ
+        import pdb
+        pdb.set_trace
         robot = BaseRoBot(token="plone2018")
         @robot.text
         def echo(message):
@@ -279,13 +281,19 @@ class Recieve(grok.View):
 
         if ev['REQUEST_METHOD'] =="GET":
             # valid request from weixin
-            if not robot.check_signature(
+            try:
+                rn = robot.check_signature(
                 data["timestamp"],
                 data["nonce"],
                 data["signature"]
-            ):
+            )
+                if rn:
+                    return data["echostr"]
+                else:
+                    return self.abort(403)                 
+            except:
                 return self.abort(403)
-            return data["echostr"]            
+           
             
         else:
             # normal request form weixin
