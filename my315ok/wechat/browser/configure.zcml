@@ -11,5 +11,12 @@
       template="templates/send_page.pt"
       permission="zope2.View"
       />
+  <browser:page
+      for="*"
+      name="robot"
+      class=".receive.Robot"
+      permission="zope2.View"
+      />      
+    
 
 </configure>

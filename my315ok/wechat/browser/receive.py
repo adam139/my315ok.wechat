@@ -53,7 +53,7 @@ class BaseRoBot(object):
         self.logger = logger
 
         if enable_session and session_storage is None:
-            from .session.filestorage import FileStorage
+            from my315ok.wechat.session.filestorage import FileStorage
             session_storage = FileStorage(
                 filename=os.path.abspath("werobot_session")
             )
@@ -235,6 +235,76 @@ class BaseRoBot(object):
         sign = to_binary(''.join(sign))
         sign = hashlib.sha1(sign).hexdigest()
         return sign == signature
+    
+    
+from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+class Robot(BrowserView):
+#    error_template = ViewPageTemplateFile("templates/error.pt")
+#    out_template = ViewPageTemplateFile("templates/outxml.pt")   
+    
+    def outxml(self):
+        data = self.request.form
+        ev = self.request.environ
+        robot = BaseRoBot(token="plone2018")  
+        
+        @robot.text
+        def echo(message):
+#            return "haha"
+            a1 = ArticlesReply(message=message,star=True,MsgType="news",ArticleCount=1)
+            item = Article(title=u"Plone技术论坛",img="",description="最大的中文Plone技术社区",url="http://plone.315ok.org/")
+            a1.add_article(item)
+            return a1         
+        try:
+            rn = robot.check_signature(
+            data["timestamp"],
+            data["nonce"],
+            data["signature"]
+            )
+        except:
+            return self.abort(403)
+            
+        if ev['REQUEST_METHOD'] =="GET":
+            # valid request from weixin
+            if rn:
+                return data["echostr"]
+            else:
+                return self.abort(403)           
+            
+        else:
+            # normal request form weixin
+            if not rn:
+                return self.abort(403)
+
+            body =  self.request.keys()[0]
+# 分析原始xml，返回名类型message实例            
+            message = parse_user_msg(body)
+            logging.info("Receive message %s" % message)
+#根据信息类型查询已注册的handler,返回被handler装饰的函数，参数为对应类型message实例            
+            reply = robot.get_reply(message)
+            if not reply:
+                robot.logger.warning("No handler responded message %s"
+                                    % message)
+                return ''
+#设置返回文档头            
+#            self.request.response.content_type = 'application/xml'
+            self.request.response.content_type = 'text/xml'            
+#创建回复消息             
+            
+            s2 = create_reply(reply, message=message)
+#            return self.response2wechat(s2)
+            return s2
+    
+    
+    def __call__(self):
+         
+
+        # Set header
+        self.request.RESPONSE.setHeader("Content-type", "text/xml")
+        self.index = ViewPageTemplateFile("templates/outxml.pt") 
+
+        return self.index(self)    
 
 
 class Recieve(grok.View):
@@ -266,14 +336,16 @@ class Recieve(grok.View):
         </body>
     </html>
     """ % (status,status) 
-        return template    
+        return template
+    
+  
     
     def render(self):
         data = self.request.form
         ev = self.request.environ
+        robot = BaseRoBot(token="plone2018") 
 
-        robot = BaseRoBot(token="plone2018")
-   
+ 
         
         @robot.text
         def echo(message):
@@ -304,7 +376,7 @@ class Recieve(grok.View):
                 return self.abort(403)
 #            import pdb
 #            pdb.set_trace()
-            body =  self.request.get('BODY')
+            body =  self.request.keys()[0]
 # 分析原始xml，返回名类型message实例            
             message = parse_user_msg(body)
             logging.info("Receive message %s" % message)
@@ -315,15 +387,14 @@ class Recieve(grok.View):
                                     % message)
                 return ''
 #设置返回文档头            
-            self.request.response.content_type = 'application/xml'
+#            self.request.response.content_type = 'application/xml'
+            self.request.response.content_type = 'text/xml'            
 #创建回复消息             
-            return create_reply(reply, message=message)
+            
+            s2 = create_reply(reply, message=message)
+#            return self.response2wechat(s2)
+            return s2
 
-#        @self.app.error(403)
-#        def error403(error):
-#            return template(self.ERROR_PAGE_TEMPLATE,
-#                            e=error, request=request)
-#
-#        return app            
+         
             
 
