@@ -244,7 +244,7 @@ class Robot(BrowserView):
 #    error_template = ViewPageTemplateFile("templates/error.pt")
 #    out_template = ViewPageTemplateFile("templates/outxml.pt")   
     
-    def outxml(self):
+    def outxml(self,robot):
         data = self.request.form
         ev = self.request.environ
         robot = BaseRoBot(token="plone2018")  
@@ -297,13 +297,12 @@ class Robot(BrowserView):
             return s2
     
     
-    def __call__(self):
-         
+    def __call__(self):         
 
         # Set header
-        self.request.RESPONSE.setHeader("Content-type", "text/xml")
-        self.index = ViewPageTemplateFile("templates/outxml.pt") 
-
+#        robot = BaseRoBot(token="plone2018")
+#        self.request.RESPONSE.setHeader("Content-type", "text/xml")
+        self.index = ViewPageTemplateFile("templates/outxml.pt")
         return self.index(self)    
 
 
