@@ -241,12 +241,19 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 class Robot(BrowserView):
-#    error_template = ViewPageTemplateFile("templates/error.pt")
-#    out_template = ViewPageTemplateFile("templates/outxml.pt")   
+  
     
-    def outxml(self,robot):
+    def error(self):
+        return "errror 403"
+    
+    def echo(self):
         data = self.request.form
-        ev = self.request.environ
+        return data["echostr"]
+        
+        
+    def outxml(self):
+#        data = self.request.form
+
         robot = BaseRoBot(token="plone2018")  
         
         @robot.text
@@ -256,6 +263,35 @@ class Robot(BrowserView):
             item = Article(title=u"Plone技术论坛",img="",description="最大的中文Plone技术社区",url="http://plone.315ok.org/")
             a1.add_article(item)
             return a1         
+
+
+        body =  self.request.keys()[0]
+
+# 分析原始xml，返回名类型message实例            
+        message = parse_user_msg(body)
+        logging.info("Receive message %s" % message)
+#根据信息类型查询已注册的handler,返回被handler装饰的函数，参数为对应类型message实例            
+        reply = robot.get_reply(message)
+        if not reply:
+            robot.logger.warning("No handler responded message %s"
+                                    % message)
+            return ''
+#设置返回文档头            
+#            self.request.response.content_type = 'application/xml'
+#            self.request.response.content_type = 'text/xml'            
+#创建回复消息             
+            
+        s2 = create_reply(reply, message=message)
+#            return self.response2wechat(s2)
+        return s2
+    
+    
+    def __call__(self):
+        ev = self.request.environ
+        data = self.request.form                 
+        robot = BaseRoBot(token="plone2018") 
+#        import pdb 
+#        pdb.set_trace()
         try:
             rn = robot.check_signature(
             data["timestamp"],
@@ -263,45 +299,30 @@ class Robot(BrowserView):
             data["signature"]
             )
         except:
-            return self.abort(403)
+            self.index = ViewPageTemplateFile("templates/error.pt")
+            return self.index(self) 
             
         if ev['REQUEST_METHOD'] =="GET":
             # valid request from weixin
             if rn:
-                return data["echostr"]
+                self.index = ViewPageTemplateFile("templates/echo.pt")
+                self.request.RESPONSE.setHeader("Content-type", "text/plain")
+                     
+#                return data["echostr"]
+                return self.index(self)
             else:
-                return self.abort(403)           
+                self.index = ViewPageTemplateFile("templates/error.pt")
+
+                return self.index(self)           
             
         else:
             # normal request form weixin
             if not rn:
-                return self.abort(403)
-
-            body =  self.request.keys()[0]
-# 分析原始xml，返回名类型message实例            
-            message = parse_user_msg(body)
-            logging.info("Receive message %s" % message)
-#根据信息类型查询已注册的handler,返回被handler装饰的函数，参数为对应类型message实例            
-            reply = robot.get_reply(message)
-            if not reply:
-                robot.logger.warning("No handler responded message %s"
-                                    % message)
-                return ''
-#设置返回文档头            
-#            self.request.response.content_type = 'application/xml'
-            self.request.response.content_type = 'text/xml'            
-#创建回复消息             
-            
-            s2 = create_reply(reply, message=message)
-#            return self.response2wechat(s2)
-            return s2
-    
-    
-    def __call__(self):         
-
-        # Set header
+                self.index = ViewPageTemplateFile("templates/error.pt")
+#                self.request.RESPONSE.setHeader("Content-type", "text/plain")
+                return self.index(self)       # Set header
 #        robot = BaseRoBot(token="plone2018")
-#        self.request.RESPONSE.setHeader("Content-type", "text/xml")
+        self.request.RESPONSE.setHeader("Content-type", "text/xml")
         self.index = ViewPageTemplateFile("templates/outxml.pt")
         return self.index(self)    
 

@@ -1,21 +1,7 @@
-<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xml:lang="zh-cn"
-      lang="zh-cn">
-        <head>
-            <meta charset="utf8" />
-            <title>Error</title>
-            <style type="text/css">
-              html {background-color: #eee; font-family: sans;}
-              body {background-color: #fff; border: 1px solid #ddd;
-                    padding: 15px; margin: 15px;}
-              pre {background-color: #eee; border: 1px solid #ddd; padding: 5px;}
-            </style>
-        </head>
-        <body>
-            <h1>Error: <span tal:content="python:view.error()"></span></h1>
-            <p>微信机器人不可以通过 GET 方式直接进行访问。</p>
-        </body>
+      lang="zh-cn" tal:omit-tag="" tal:content="structure python:view.error()">
+
     </html>
