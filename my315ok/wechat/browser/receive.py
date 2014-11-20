@@ -306,7 +306,7 @@ class Robot(BrowserView):
             # valid request from weixin
             if rn:
                 self.index = ViewPageTemplateFile("templates/echo.pt")
-                self.request.RESPONSE.setHeader("Content-type", "text/plain")
+#                self.request.RESPONSE.setHeader("Content-type", "text/plain")
                      
 #                return data["echostr"]
                 return self.index(self)
@@ -356,24 +356,15 @@ class Recieve(grok.View):
         </body>
     </html>
     """ % (status,status) 
-        return template
-    
+        return template   
   
     
     def render(self):
         data = self.request.form
         ev = self.request.environ
-        robot = BaseRoBot(token="plone2018") 
-
- 
+        robot = BaseRoBot(token="plone2018")
         
-        @robot.text
-        def echo(message):
-            return "haha"
-            a1 = ArticlesReply(message=message,star=True,MsgType="news",ArticleCount=1)
-            item = Article(title=u"Plone技术论坛",img="",description="最大的中文Plone技术社区",url="http://plone.315ok.org/")
-            a1.add_article(item)
-            return a1         
+         
         try:
             rn = robot.check_signature(
             data["timestamp"],
