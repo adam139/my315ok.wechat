@@ -34,5 +34,6 @@
   <i18n:registerTranslations directory="locales" />      
   <include package=".browser" />
   <!-- -*- cusomize indexer -*- -->
-        <adapter factory=".content.menu.istopmenu" name="istopmenu" />    
+        <adapter factory=".content.menu.istopmenu" name="istopmenu" /> 
+        <adapter factory=".content.message.FromUserName" name="FromUserName" />            
 </configure>

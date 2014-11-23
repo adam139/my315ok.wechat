@@ -38,7 +38,7 @@ _DEFAULT_CONFIG = dict(
 
 class BaseRoBot(object):
     message_types = ['subscribe', 'unsubscribe', 'click',  'view',  # event
-                     'text', 'image', 'link', 'location', 'voice']
+                     'text', 'image', 'link', 'location', 'voice', 'video']
 
     token = ConfigAttribute("TOKEN")
     session_storage = ConfigAttribute("SESSION_STORAGE")
@@ -104,6 +104,13 @@ class BaseRoBot(object):
         """
         self.add_handler(f, type='voice')
         return f
+    
+    def video(self, f):
+        """
+        Decorator to add a handler function for ``video`` messages
+        """
+        self.add_handler(f, type='video')
+        return f    
 
     def subscribe(self, f):
         """
@@ -203,6 +210,7 @@ class BaseRoBot(object):
     def get_handlers(self, type):
         return self._handlers[type] + self._handlers['all']
 
+    
     def get_reply(self, message):
         """
         Return the raw xml reply for the given message.
@@ -220,14 +228,17 @@ class BaseRoBot(object):
         try:
             for handler, args_count in handlers:
                 args = [message, session][:args_count]
-                reply = handler(*args)
+                #每个装扮函数返回 一个 Plone内容对象【text: page;image:product;】
+                reply = handler(*args)    # reply 为内容对象
+                
                 if session_storage and id:
                     session_storage[id] = session
                 if reply:
                     return reply
         except:
-            self.logger.warning("Catch an exception", exc_info=True)
-
+            self.logger.warning("Catch an exception", exc_info=True)       
+        
+        
     def check_signature(self, timestamp, nonce, signature):
         sign = [self.config["TOKEN"], timestamp, nonce]
 
@@ -236,6 +247,36 @@ class BaseRoBot(object):
         sign = hashlib.sha1(sign).hexdigest()
         return sign == signature
     
+class StoreMessage(BaseRoBot):
+    """store message"""
+    
+    def store_message(self,message):
+        """store message to zodb ,the message was sent to public weixin by client"""
+
+        handlers = self.get_handlers(message.type)
+        try:
+            for handler, args_count in handlers:
+#                args = [message, session][:args_count]
+                #每个装扮函数将创建一个message内容对象，返回 一个 Plone内容对象【text: page;image:product;】
+                result = handler(message)    # result 为布尔值，创建成功返回True
+                return ""
+#                if result:
+#                    return ""
+        except:
+            self.logger.warning("Catch an exception", exc_info=True)
+            
+       
+    def get_folder(self,site):
+
+        from my315ok.wechat.content.messagefolder import IMessagefolder        
+        catalog = getToolByName(site,'portal_catalog')
+        try:
+            newest = catalog.unrestrictedSearchResults({'object_provides': IMessagefolder.__identifier__})
+            folder = newest[0].getObject()
+            return folder            
+        except:
+            return None                 
+        
     
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -360,6 +401,9 @@ class Recieve(grok.View):
   
     
     def render(self):
+        from zope import event
+        from my315ok.wechat.events import ReceiveWechatEvent
+        
         data = self.request.form
         ev = self.request.environ
         robot = BaseRoBot(token="plone2018")
@@ -390,21 +434,25 @@ class Recieve(grok.View):
             body =  self.request.keys()[0]
 # 分析原始xml，返回名类型message实例            
             message = parse_user_msg(body)
-            logging.info("Receive message %s" % message)
-#根据信息类型查询已注册的handler,返回被handler装饰的函数，参数为对应类型message实例            
-            reply = robot.get_reply(message)
-            if not reply:
-                robot.logger.warning("No handler responded message %s"
-                                    % message)
-                return ''
-#设置返回文档头            
-#            self.request.response.content_type = 'application/xml'
-            self.request.response.content_type = 'text/xml'            
-#创建回复消息             
-            
-            s2 = create_reply(reply, message=message)
-#            return self.response2wechat(s2)
-            return s2
+            logging.info("Receive message %s" % message)                    
+            event.notify(ReceiveWechatEvent(message))
+            return ""
+                         
+                         
+#根据信息类型查询已注册的handler,返回被handler装饰的函数，参数为对应类型message实例                            
+#            reply = robot.get_reply(message)
+#            if not reply:
+#                robot.logger.warning("No handler responded message %s"
+#                                    % message)
+#                return ''
+##设置返回文档头            
+##            self.request.response.content_type = 'application/xml'
+#            self.request.response.content_type = 'text/xml'            
+##创建回复消息             
+#            
+#            s2 = create_reply(reply, message=message)
+##            return self.response2wechat(s2)
+#            return s2
 
          
             

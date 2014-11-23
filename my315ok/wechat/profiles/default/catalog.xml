@@ -3,5 +3,7 @@
         <indexed_attr value="istopmenu"/>
     </index>	
     <column value="istopmenu"/>
-  
+    <index name="FromUserName" meta_type="FieldIndex">
+        <indexed_attr value="FromUserName"/>
+    </index>	  
 </object>

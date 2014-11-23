@@ -1,61 +1,63 @@
 # -*- coding: utf-8 -*-
 import zope.interface 
 from zope import schema
+from plone.directives import form
 from my315ok.wechat import MessageFactory as _
 
-class IMessage(zope.interface.Interface):
+class IMessage(form.Schema):
     """
     以微信服务器和开发平台之间双向传送的xml形式的消息报文的基本报文格式
     """
-    ToUserName = zope.interface.Attribute("""接收该消息的收件人，或者是公众平台账号，或者微信用户账号""")
-    FromUserName = zope.interface.Attribute("""发送该消息的发件人，或者是公众平台账号，或者微信用户账号""")
-    CreatedTime = zope.interface.Attribute("""消息的创建时间，整型""")
-    MsgType = zope.interface.Attribute("""该消息的类型，支持:text,image,voice,video,location,link""")
-    MsgId = zope.interface.Attribute("""消息id，64位整型 """)
+    ToUserName = schema.TextLine(title=_(u"the user name of receive message")) ##"""接收该消息的收件人，或者是公众平台账号，或者微信用户账号"""
+    FromUserName = schema.TextLine(title=_(u"the user name of send message")) ##"""发送该消息的发件人，或者是公众平台账号，或者微信用户账号"""
+    CreatedTime = schema.Int(title=_(u"time of created message")) ##"""消息的创建时间，整型"""
+    MsgType = schema.TextLine(title=_(u"type of message")) ##"""该消息的类型，支持:text,image,voice,video,location,link"""
+    MsgId = schema.ASCIILine(title=_(u"Id of message"))   ##"""消息id，64位整型 """
+
   
-class IVoiceMessage(IMessage):
+class ITextMessage(IMessage):
     """
     语音类型消息    
     """
-    Content = zope.interface.Attribute("""文本消息内容""") 
+    Content = schema.Text(title=_(u"content of message"))   ##"""文本消息内容"""
     
 class IImageMessage(IMessage):
     """
     图片类型消息    
     """       
-    PicUrl = zope.interface.Attribute("""图片链接""") 
-    MediaId = zope.interface.Attribute("""图片消息媒体id，可以调用多媒体文件下载接口拉取数据""")   
+    PicUrl = schema.URI(title=_(u"URL of the image message link to"))   ##"""图片链接"""
+    MediaId = schema.Id(title=_(u"media id of the image message"))   ##"""图片消息媒体id，可以调用多媒体文件下载接口拉取数据""" 
     
-class IVocieMessage(IMessage):
+class IVoiceMessage(IMessage):
     """
     图片类型消息    
     """       
-    Format = zope.interface.Attribute("""语音格式，如amr，speex等""")     
-    MediaId = zope.interface.Attribute("""语音消息媒体id，可以调用多媒体文件下载接口拉取数据""")  
+    Format = schema.TextLine(title=_(u"format of the voice message"))   ##"""语音格式，如amr，speex等"""   
+    MediaId = schema.Id(title=_(u"media id of the voice message"))   ##"""语音消息媒体id，可以调用多媒体文件下载接口拉取数据"""
     
 class IVideoMessage(IMessage):
     """
     视频类型消息    
     """       
-    ThumbMediaId = zope.interface.Attribute("""视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据""")     
-    MediaId = zope.interface.Attribute("""视频消息媒体id，可以调用多媒体文件下载接口拉取数据""") 
+    ThumbMediaId = schema.Id(title=_(u"thumb media id of the video message"))   ##"""视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据"""   
+    MediaId = schema.Id(title=_(u"media id of the video message"))   ##"""视频消息媒体id，可以调用多媒体文件下载接口拉取数据"""
     
 class ILocationMessage(IMessage):
     """
     地理位置类型消息    
     """       
-    Location_X = zope.interface.Attribute("""地理位置维度""")   
-    Location_y = zope.interface.Attribute("""地理位置经度""")
-    Scale = zope.interface.Attribute("""地图缩放大小""")              
-    Label = zope.interface.Attribute("""地理位置信息""") 
+    Location_X = schema.Float(title=_(u" latitude of the location message"))   ##"""地理位置纬度""" 
+    Location_y = schema.Float(title=_(u"longitude of the location message"))   ##"""地理位置经度"""
+    Scale = schema.Int(title=_(u"Location accuracy of the location message"))   ##"""地图缩放大小"""            
+    Label = schema.TextLine(title=_(u"label  of the location message"))   ##"""地理位置信息"""
     
 class ILinkMessage(IMessage):
     """
     链接类型消息    
     """       
-    Title = zope.interface.Attribute("""消息标题""")   
-    Description = zope.interface.Attribute("""消息描述""")    
-    Url = zope.interface.Attribute("""消息链接""")     
+    Title = schema.TextLine(title=_(u"title of the link message"))   ##"""消息标题""" 
+    Description = schema.TextLine(title=_(u"description of the link message"))   ##"""消息描述"""  
+    Url = schema.URI(title=_(u"URL of the link message"))   ##"""消息链接"""   
     
 class IAnalyzeMessage(zope.interface.Interface):
     """
@@ -107,9 +109,17 @@ class IwechatSettings(zope.interface.Interface):
                              title=_(u"app secret"),
                              description=_(u"weixin app secret"),
                              )
+    token = schema.ASCII(
+                             title=_(u"app token"),
+                             description=_(u"weixin app token"),
+                             )    
     
 class ISendWechatEvent(zope.interface.Interface):
     """
     a send wechat event mark interface.
-    """    
+    """  
+class IReceiveWechatEvent(zope.interface.Interface):
+    """
+    a receive wechat event mark interface.
+    """        
                      

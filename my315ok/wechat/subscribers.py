@@ -1,16 +1,67 @@
 #-*- coding: UTF-8 -*-
 from five import grok
-from zope.lifecycleevent.interfaces import IObjectAddedEvent,IObjectRemovedEvent
+from zope import event
 
 from Products.ATContentTypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import Iweixinapi
-from my315ok.wechat.events import ISendWechatEvent
+
+from my315ok.wechat.events import ISendWechatEvent,IReceiveWechatEvent
+#from Products.ATContentTypes.interfaces import IATNewsItem
 from my315ok.wechat.weixinapi import check_error
 from my315ok.wechat.tests.test_api import putFile,getFile
 
 from cStringIO import StringIO
 from PIL import Image
-        
+
+from plone.dexterity.utils import createContentInContainer          
+
+@grok.subscribe(IReceiveWechatEvent)
+def ReceiveWechatEvent(eventobj):
+    """this event be fired by member join event, username,address password parameters to create a membrane object"""
+    
+    from my315ok.wechat.browser.receive import BaseRoBot,StoreMessage 
+    from Products.ATContentTypes.interfaces import IATNewsItem
+    from zope.site.hooks import getSite
+    from Products.CMFCore.utils import getToolByName
+    from my315ok.wechat.events import SendWechatEvent
+    site = getSite()
+    robot = BaseRoBot(token="plone2018")
+    
+    @robot.text
+    def echo(message):        
+        catalog = getToolByName(site,'portal_catalog')
+        try:
+            newest = catalog.unrestrictedSearchResults({'object_provides': IATNewsItem.__identifier__})
+            return newest[0].getObject()
+        except:
+            return
+
+              
+    reply = robot.get_reply(eventobj.message)
+    del robot
+#    event.notify(SendWechatEvent(reply))
+    
+    storer = StoreMessage()
+    # 文本消息，保存为textmessage对象
+    @storer.text
+    def create_text_message(message):
+        folder = storer.get_folder(site)
+        mid = str(message.id)
+        contenttype = "my315ok.wechat.content.textmessage" 
+        try:
+            item =createContentInContainer(folder,contenttype,checkConstraints=False,id=mid)
+            item.Content = message.content
+            item.FromUserName = message.source
+            item.MsgType = "text"
+            item.MsgId = mid
+            return True            
+        except:
+            return  False
+            
+
+    return storer.store_message(eventobj.message)
+
+
 @grok.subscribe(IATNewsItem, ISendWechatEvent)
 def sendnews(obj, event):
         """send the news as message of the Wechat"""
@@ -60,8 +111,7 @@ def sendnews(obj, event):
             raise ("some error")        
         data["touser"] = followers
         data["mpnews"] = newsdic
-        data["msgtype"] = "mpnews"
-        
+        data["msgtype"] = "mpnews"        
         api.send_by_openid(data)
 
         

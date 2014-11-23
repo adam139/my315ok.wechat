@@ -6,6 +6,12 @@
   <record interface="my315ok.wechat.interfaces.IwechatSettings.appid">
     <value>220</value>
 	</record>
+  <record interface="my315ok.wechat.interfaces.IwechatSettings.appsecret">
+    <value>220</value>
+	</record>
+  <record interface="my315ok.wechat.interfaces.IwechatSettings.token">
+    <value>plone2018</value>
+	</record>		
 </records>
 
 </registry>

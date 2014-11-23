@@ -10,4 +10,11 @@
   <!-- -*- extra stuff goes here -*- -->
   <object name="my315ok.wechat.content.menu" meta_type="Dexterity FTI" />
   <object name="my315ok.wechat.content.menufolder" meta_type="Dexterity FTI" />
+  <object name="my315ok.wechat.content.textmessage" meta_type="Dexterity FTI" />
+  <object name="my315ok.wechat.content.imagemessage" meta_type="Dexterity FTI" />
+  <object name="my315ok.wechat.content.linkmessage" meta_type="Dexterity FTI" />
+  <object name="my315ok.wechat.content.voicemessage" meta_type="Dexterity FTI" />
+  <object name="my315ok.wechat.content.videomessage" meta_type="Dexterity FTI" />
+  <object name="my315ok.wechat.content.locationmessage" meta_type="Dexterity FTI" />          
+  <object name="my315ok.wechat.content.messagefolder" meta_type="Dexterity FTI" />  
 </object>
