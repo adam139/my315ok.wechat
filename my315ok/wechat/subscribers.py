@@ -2,6 +2,7 @@
 from five import grok
 from zope import event
 import zope.interface
+from zope.component import getMultiAdapter
 from Products.ATContentTypes.interfaces import IATNewsItem,IATDocument
 from plone.dexterity.interfaces import IDexterityContent
 from my315ok.wechat.interfaces import Iweixinapi
@@ -12,6 +13,7 @@ from my315ok.wechat.weixinapi import check_error
 from my315ok.wechat.tests.test_api import putFile,getFile
 
 from my315ok.products.product import Iproduct
+from my315ok.products.productfolder import Iproductfolder
 
 from cStringIO import StringIO
 from PIL import Image
@@ -111,23 +113,6 @@ def sendnews(obj, event):
         if IATNewsItem.providedBy(obj):
             text = obj.getText()
 
-#            try:
-#                imgobj = StringIO(obj.getImage().data)
-#                imgobj = Image.open(imgobj)
-#                suffix = (imgobj.format).lower()
-#                filename = "news.%s" % suffix
-#                imgfile = putFile(filename)
-#                imgobj.save(imgfile)
-#                del imgobj
-##        imgobj = getFile('image.jpg')
-#                filename = open(imgfile,'r')
-#            except:
-#                filename = getFile("avatar_default.jpg")
-#            rt = api.upload_media('image',filename)
-#
-#            filename.close()
-#            rt = check_error(rt)
-#            mid = rt["media_id"]
             mid = uploadImage(api,obj)            
             news_parameters ={}    # declare a news item parameters
             news_parameters["thumb_media_id"] = mid
@@ -157,6 +142,7 @@ def sendnews(obj, event):
             api.send_by_openid(data)
             
         elif  IATDocument.providedBy(obj):
+
             text = obj.getText()
             try:
                 followers = self.api.get_followers()['data']['openid']
@@ -197,7 +183,41 @@ def sendnews(obj, event):
             data["touser"] = followers
             data["mpnews"] = newsdic
             data["msgtype"] = "mpnews"        
-            api.send_by_openid(data)            
+            api.send_by_openid(data)
+        elif  Iproductfolder.providedBy(obj):
+
+            request = getattr(obj, "REQUEST", None)
+            folderview = getMultiAdapter((obj, request),name=u"view")
+            subitems = folderview.prdt_images()
+            ars = [] # article array, member item is a news item            
+            for obj in subitems:
+                mid = uploadImage(api,obj.getObject())            
+                news_parameters ={}    # declare a news item parameters
+                news_parameters["thumb_media_id"] = mid
+                news_parameters["author"] = "admin"
+                news_parameters["title"] = obj.title
+                news_parameters["content_source_url"] = obj.getPath()
+                news_parameters["content"] = obj.text
+                news_parameters["digest"] = obj.description
+                news_parameters["show_cover_pic"] = "1"
+                ars.append(news_parameters)
+            data = {}
+            data["articles"] = ars
+            del ars   #free ram storage   
+        
+            newsid = api.upload_news(data)
+            newsdic = {}
+            newsdic["media_id"] = newsid
+            data = {}
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise ("some error")        
+            data["touser"] = followers
+            data["mpnews"] = newsdic
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)                
+                          
             
             
             

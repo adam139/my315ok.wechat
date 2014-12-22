@@ -56,6 +56,12 @@ class setupbase(unittest.TestCase):
                                          text='news',
 
                                          )
+        portal.invokeFactory('Document','page1',
+                                         title=u"page1",
+                                         description=u"a document",
+                                         text='<p>document</p>',
+
+                                         )        
         data = getFile('image.jpg').read()
         item = portal['news1']
         item.setImage(data, content_type="image/jpg")
@@ -141,8 +147,8 @@ class Allcontents(setupbase):
 #        imgobj =  StringIO(imgobj.read())
         upreturn = self.api.upload_media('image',imgobj)
         imgobj.close()
-        import pdb
-        pdb.set_trace()
+#        import pdb
+#        pdb.set_trace()
         self.assertEqual('image',upreturn['type'])
         
         
@@ -159,8 +165,18 @@ class Allcontents(setupbase):
             self.api.send_text_message(toid,text)
         
 #测试按openid群发图dexterity content object: product   
+    def test_sendnews_article(self):
+        item = self.portal['productfolder1']
+        event.notify(SendWechatEvent(item))
+
+#测试按openid群发图dexterity content object: product   
     def test_sendnews_prod(self):
         item = self.portal['productfolder1']['product2']
+        event.notify(SendWechatEvent(item))
+
+#测试按openid群发图dexterity content object: product   
+    def test_sendnews_page(self):
+        item = self.portal['page1']
         event.notify(SendWechatEvent(item))
 
 #测试按openid群发图文消息    
