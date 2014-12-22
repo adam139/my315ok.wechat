@@ -6,9 +6,11 @@ from plone.app.testing import TEST_USER_ID, setRoles
 
 from my315ok.wechat.interfaces import Iweixinapi
 from my315ok.wechat.weixinapi import check_error
+from my315ok.wechat.events import SendWechatEvent
 from Products.ATContentTypes.interfaces import IATNewsItem
 from Products.ATContentTypes.content.newsitem import ATNewsItem
 from plone.namedfile.file import NamedImage
+from zope import event
 import os
 import json
 from cStringIO import StringIO
@@ -32,7 +34,21 @@ class setupbase(unittest.TestCase):
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ('Manager',))
         
-#        portal.invokeFactory('collective.conference.conferencefolder','conferencefolder1')
+        portal.invokeFactory('my315ok.products.productfolder', 'productfolder1',
+                             PerPagePrdtNum=2,title="productfolder1",description="demo productfolder")     
+     
+        portal['productfolder1'].invokeFactory('my315ok.products.product','product1',title="Gif image",description="a gif image")
+        portal['productfolder1'].invokeFactory('my315ok.products.product','product2',title="Jpeg image",description="a jpeg image")
+#        portal['productfolder1'].invokeFactory('my315ok.products.product','product3',title="Png image",description="a png image")        
+
+        data = getFile('image.gif').read()
+        item = portal['productfolder1']['product1']
+        item.image = NamedImage(data, 'image/gif', u'image.gif')
+        item.text = "<p>test send dexterity object</p>"        
+        data2 = getFile('image.jpg').read()        
+        item2 = portal['productfolder1']['product2']
+        item2.image = NamedImage(data2, 'image/jpeg', u'image.jpg')
+        item2.text = "<p>test send dexterity object</p>"  
 
         portal.invokeFactory('News Item','news1',
                                          title=u"news1",
@@ -45,7 +61,14 @@ class setupbase(unittest.TestCase):
         item.setImage(data, content_type="image/jpg")
 
         self.portal = portal
-        self.api = Iweixinapi(portal['news1'])    
+
+        from my315ok.wechat.interfaces import ISendCapable
+        obj = portal['news1']
+        if not(ISendCapable.providedBy(obj)):
+            from zope.interface import alsoProvides
+            alsoProvides(obj,ISendCapable)
+        self.api = Iweixinapi(obj)        
+#        self.api = Iweixinapi(portal['news1'])    
 
 class Allcontents(setupbase):
     layer = INTEGRATION_TESTING   
@@ -135,52 +158,58 @@ class Allcontents(setupbase):
         for toid in followers:
             self.api.send_text_message(toid,text)
         
+#测试按openid群发图dexterity content object: product   
+    def test_sendnews_prod(self):
+        item = self.portal['productfolder1']['product2']
+        event.notify(SendWechatEvent(item))
+
 #测试按openid群发图文消息    
     def test_sendnews(self):
         item = self.portal['news1']
-        text = item.getText()
-        import pdb
-        pdb.set_trace()
-        imgobj = StringIO(item.getImage().data)
-
-        imgobj = Image.open(imgobj)
-        filename = "news.%s" % (imgobj.format).lower()
-        imgfile = putFile(filename)
-        imgobj.save(imgfile)
-#        imgobj = getFile('image.jpg')
-        filename = open(imgfile,'r')
-        rt = self.api.upload_media('image',filename)
-        del imgobj
-        filename.close()
-        rt = check_error(rt)
-        mid = rt["media_id"]
-        news_parameters ={}
-        news_parameters["thumb_media_id"] = mid
-        news_parameters["author"] = "admin"
-        news_parameters["title"] = item.title
-        news_parameters["content_source_url"] = item.absolute_url()
-        news_parameters["content"] = text
-        news_parameters["digest"] = item.description
-        news_parameters["show_cover_pic"] = "1"
-        ars = []
-        ars.append(news_parameters)
-        data = {}
-        data["articles"] = ars
-        del ars      
-        
-        newsid = self.api.upload_news(data)
-        newsdic = {}
-        newsdic["media_id"] = newsid
-        data = {}
-        try:
-            followers = self.api.get_followers()['data']['openid']
-        except:
-            raise ("some error")        
-        data["touser"] = followers
-        data["mpnews"] = newsdic
-        data["msgtype"] = "mpnews"
-        
-        self.api.send_by_openid(data)
+        event.notify(SendWechatEvent(item))
+#        text = item.getText()
+#        import pdb
+#        pdb.set_trace()
+#        imgobj = StringIO(item.getImage().data)
+#
+#        imgobj = Image.open(imgobj)
+#        filename = "news.%s" % (imgobj.format).lower()
+#        imgfile = putFile(filename)
+#        imgobj.save(imgfile)
+##        imgobj = getFile('image.jpg')
+#        filename = open(imgfile,'r')
+#        rt = self.api.upload_media('image',filename)
+#        del imgobj
+#        filename.close()
+#        rt = check_error(rt)
+#        mid = rt["media_id"]
+#        news_parameters ={}
+#        news_parameters["thumb_media_id"] = mid
+#        news_parameters["author"] = "admin"
+#        news_parameters["title"] = item.title
+#        news_parameters["content_source_url"] = item.absolute_url()
+#        news_parameters["content"] = text
+#        news_parameters["digest"] = item.description
+#        news_parameters["show_cover_pic"] = "1"
+#        ars = []
+#        ars.append(news_parameters)
+#        data = {}
+#        data["articles"] = ars
+#        del ars      
+#        
+#        newsid = self.api.upload_news(data)
+#        newsdic = {}
+#        newsdic["media_id"] = newsid
+#        data = {}
+#        try:
+#            followers = self.api.get_followers()['data']['openid']
+#        except:
+#            raise ("some error")        
+#        data["touser"] = followers
+#        data["mpnews"] = newsdic
+#        data["msgtype"] = "mpnews"
+#        
+#        self.api.send_by_openid(data)
 #        self.assertEqual(imgobj,getFile('image.jpg').read())
        # 二维码测试
     def test_qrcode(self):

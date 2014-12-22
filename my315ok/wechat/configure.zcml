@@ -11,13 +11,14 @@
     <includeDependencies package="." />
     <!-- Grok the package to initialise schema interfaces and content classes -->
     <grok:grok package="." />
-<adapter
+    
+		<adapter
     factory="my315ok.wechat.weixinapi.Client"
     provides=".interfaces.Iweixinapi"
-    for="Products.CMFCore.interfaces.IContentish"
-    /> 
+    for=".interfaces.ISendCapable"     
+   		 /> 
     
-  <!-- Register the control panel for My315ok wechat settings -->
+  <!--    for="Products.CMFCore.interfaces.IContentish" Register the control panel for My315ok wechat settings -->
   <browser:page
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       name="my315okwechat-controlpanel"
@@ -34,6 +35,6 @@
   <i18n:registerTranslations directory="locales" />      
   <include package=".browser" />
   <!-- -*- cusomize indexer -*- -->
-        <adapter factory=".content.menu.istopmenu" name="istopmenu" /> 
-        <adapter factory=".content.message.FromUserName" name="FromUserName" />            
+  <adapter factory=".content.menu.istopmenu" name="istopmenu" /> 
+  <adapter factory=".content.message.FromUserName" name="FromUserName" />            
 </configure>

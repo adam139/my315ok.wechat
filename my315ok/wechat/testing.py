@@ -14,6 +14,8 @@ class SitePolicy(PloneSandboxLayer):
     
     def setUpZope(self, app, configurationContext):
         # Load ZCML
+        import my315ok.products
+        xmlconfig.file('configure.zcml', my315ok.products, context=configurationContext)        
         import my315ok.wechat
         xmlconfig.file('configure.zcml', my315ok.wechat, context=configurationContext)
         
@@ -33,6 +35,7 @@ class SitePolicy(PloneSandboxLayer):
 #        z2.uninstallProduct(app, 'Products.membrane')        
         
     def setUpPloneSite(self, portal):
+        applyProfile(portal, 'my315ok.products:default')        
         applyProfile(portal, 'my315ok.wechat:default')
 
 FIXTURE = SitePolicy()

@@ -16,6 +16,7 @@ import requests
 
 from requests.compat import json as _json
 from my315ok.wechat.utilities import to_text
+from my315ok.wechat.interfaces import ISendCapable
 
 
 class ClientException(Exception):
@@ -47,7 +48,7 @@ class Client(object):
     通过这个类可以方便的通过微信 API 进行一系列操作，比如主动发送消息、创建自定义菜单等
     """
     implements(Iweixinapi)
-    adapts(IContentish)
+    adapts(ISendCapable)
     def __init__(self, context):
 
         self.cotext = context

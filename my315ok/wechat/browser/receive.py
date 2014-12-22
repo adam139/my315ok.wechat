@@ -282,6 +282,14 @@ from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 class Robot(BrowserView):
+    
+    def __init__(self,context, request):
+        # Each view instance receives context and request as construction parameters
+        import pdb
+        pdb.set_trace()
+        
+        self.context = context
+        self.request = request
   
     
     def error(self):
@@ -306,7 +314,7 @@ class Robot(BrowserView):
             return a1         
 
 
-        body =  self.request.keys()[0]
+        body =  self.request.get['BODY']
 
 # 分析原始xml，返回名类型message实例            
         message = parse_user_msg(body)
@@ -340,28 +348,25 @@ class Robot(BrowserView):
             data["signature"]
             )
         except:
-            self.index = ViewPageTemplateFile("templates/error.pt")
-            return self.index(self) 
+            response = self.request.response
+            return "<html><body>error 403</body></html>"
             
         if ev['REQUEST_METHOD'] =="GET":
             # valid request from weixin
             if rn:
-                self.index = ViewPageTemplateFile("templates/echo.pt")
-#                self.request.RESPONSE.setHeader("Content-type", "text/plain")
-                     
-#                return data["echostr"]
-                return self.index(self)
-            else:
-                self.index = ViewPageTemplateFile("templates/error.pt")
+                response = self.request.response
+#                return "<html><body>%s</body></html>" % （）                     
+                return data["echostr"]
 
-                return self.index(self)           
+            else:
+                response = self.request.response
+                return "<html><body>error 403</body></html>"        
             
         else:
             # normal request form weixin
             if not rn:
-                self.index = ViewPageTemplateFile("templates/error.pt")
-#                self.request.RESPONSE.setHeader("Content-type", "text/plain")
-                return self.index(self)       # Set header
+                response = self.request.response
+                return "<html><body>error 403</body></html>"     # Set header
 #        robot = BaseRoBot(token="plone2018")
         self.request.RESPONSE.setHeader("Content-type", "text/xml")
         self.index = ViewPageTemplateFile("templates/outxml.pt")
@@ -402,12 +407,13 @@ class Recieve(grok.View):
     
     def render(self):
         from zope import event
+        import pdb
+        pdb.set_trace()
         from my315ok.wechat.events import ReceiveWechatEvent
         
         data = self.request.form
         ev = self.request.environ
-        robot = BaseRoBot(token="plone2018")
-        
+        robot = BaseRoBot(token="plone2018")        
          
         try:
             rn = robot.check_signature(
@@ -429,8 +435,7 @@ class Recieve(grok.View):
             # normal request form weixin
             if not rn:
                 return self.abort(403)
-#            import pdb
-#            pdb.set_trace()
+
             body =  self.request.keys()[0]
 # 分析原始xml，返回名类型message实例            
             message = parse_user_msg(body)

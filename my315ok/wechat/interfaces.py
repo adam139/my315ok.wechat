@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import zope.interface 
+import zope.interface
+from Products.CMFCore.interfaces import IContentish
+from plone.dexterity.interfaces import IDexterityContent 
 from zope import schema
 from plone.directives import form
 from my315ok.wechat import MessageFactory as _
@@ -96,7 +98,12 @@ class Iweixinapi(zope.interface.Interface):
     """
     api marker interface
     """    
-        
+
+class ISendCapable(IContentish,IDexterityContent):
+    """
+    marker interface,mark a object may send its content as wechat
+    """          
+
 class IwechatSettings(zope.interface.Interface):
     """Describes registry records
     """
