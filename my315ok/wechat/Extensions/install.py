@@ -1,6 +1,6 @@
 # -*- coding: utf8 -*-
 
-from my315ok.wechat import logger 
+#from my315ok.wechat import logger 
 
 #def install(portal, reinstall=False):
 #    # Not needed if you don't need to run different profile conditionally
@@ -15,4 +15,4 @@ def uninstall(portal, reinstall=False):
         setup_tool = portal.portal_setup
         setup_tool.runAllImportStepsFromProfile('profile-my315ok.wechat:uninstall')
 
-        logger.info("Uninstall done")
+#        logger.info("Uninstall done")
