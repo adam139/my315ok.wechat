@@ -20,7 +20,7 @@ from PIL import Image
 
 from plone.dexterity.utils import createContentInContainer          
 
-def uploadImage(api,context):
+def uploadImage(api,obj):
     """
     upload current object's image field to wechat server as image media,
     parameters: 
@@ -29,8 +29,9 @@ def uploadImage(api,context):
     return mediaid
     """  
 
+
     try:
-        if IATNewsItem.providedBy(context):
+        if IATNewsItem.providedBy(obj):
             imgobj = StringIO(obj.getImage().data)
         else:
             imgobj = StringIO(obj.image.data)
@@ -51,7 +52,7 @@ def uploadImage(api,context):
         mid = rt["media_id"]
         return mid
     except:
-        raise ("some error:can't upload image")
+        raise Exception("some error:can't upload image")
 
 
 @grok.subscribe(IReceiveWechatEvent)
@@ -117,10 +118,10 @@ def sendnews(obj, event):
             news_parameters ={}    # declare a news item parameters
             news_parameters["thumb_media_id"] = mid
             news_parameters["author"] = "admin"
-            news_parameters["title"] = obj.title
+            news_parameters["title"] = obj.Title
             news_parameters["content_source_url"] = obj.absolute_url()
             news_parameters["content"] = text
-            news_parameters["digest"] = obj.description
+            news_parameters["digest"] = obj.Description
             news_parameters["show_cover_pic"] = "1"
             ars = [] # article array, member item is a news item
             ars.append(news_parameters)
@@ -135,7 +136,7 @@ def sendnews(obj, event):
             try:
                 followers = api.get_followers()['data']['openid']
             except:
-                raise ("some error")        
+                raise Exception("some error")        
             data["touser"] = followers
             data["mpnews"] = newsdic
             data["msgtype"] = "mpnews"        
@@ -147,12 +148,13 @@ def sendnews(obj, event):
             try:
                 followers = self.api.get_followers()['data']['openid']
             except:
-                raise ("some error")
+                raise Exception("some error")
 
             for toid in followers:
                 self.api.send_text_message(toid,text)
                 # if is dexterity content object
         elif Iproduct.providedBy(obj):
+
             try:
                 text = obj.text.output
             except:
@@ -161,10 +163,10 @@ def sendnews(obj, event):
             news_parameters ={}    # declare a news item parameters
             news_parameters["thumb_media_id"] = mid
             news_parameters["author"] = "admin"
-            news_parameters["title"] = obj.title
+            news_parameters["title"] = obj.Title
             news_parameters["content_source_url"] = obj.absolute_url()
             news_parameters["content"] = text
-            news_parameters["digest"] = obj.description
+            news_parameters["digest"] = obj.Description
             news_parameters["show_cover_pic"] = "1"
             ars = [] # article array, member item is a news item
             ars.append(news_parameters)
@@ -179,7 +181,7 @@ def sendnews(obj, event):
             try:
                 followers = api.get_followers()['data']['openid']
             except:
-                raise ("some error")        
+                raise Exception("some error")        
             data["touser"] = followers
             data["mpnews"] = newsdic
             data["msgtype"] = "mpnews"        
@@ -189,16 +191,20 @@ def sendnews(obj, event):
             request = getattr(obj, "REQUEST", None)
             folderview = getMultiAdapter((obj, request),name=u"view")
             subitems = folderview.prdt_images()
-            ars = [] # article array, member item is a news item            
+            ars = [] # article array, member item is a news item 
+            k = 0           
             for obj in subitems:
+                k = k+1
+                if k > 3:break    # max is 10 newsitems
+
                 mid = uploadImage(api,obj.getObject())            
                 news_parameters ={}    # declare a news item parameters
                 news_parameters["thumb_media_id"] = mid
                 news_parameters["author"] = "admin"
-                news_parameters["title"] = obj.title
+                news_parameters["title"] = obj.Title
                 news_parameters["content_source_url"] = obj.getPath()
                 news_parameters["content"] = obj.text
-                news_parameters["digest"] = obj.description
+                news_parameters["digest"] = obj.Description
                 news_parameters["show_cover_pic"] = "1"
                 ars.append(news_parameters)
             data = {}
@@ -212,10 +218,11 @@ def sendnews(obj, event):
             try:
                 followers = api.get_followers()['data']['openid']
             except:
-                raise ("some error")        
+                raise Exception("some error")        
             data["touser"] = followers
             data["mpnews"] = newsdic
-            data["msgtype"] = "mpnews"        
+            data["msgtype"] = "mpnews"
+        
             api.send_by_openid(data)                
                           
             

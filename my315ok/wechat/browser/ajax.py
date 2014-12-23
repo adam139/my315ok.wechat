@@ -29,9 +29,9 @@ class AjaxSend(grok.View):
     def render(self):
         data = self.request.form
         id = data['id']
+        title = data['title']        
         catalog = getToolByName(self.context, 'portal_catalog')
-        brains = catalog({'object_provides': IATNewsItem.__identifier__,
-                                  'id': id})
+        brains = catalog({'Title': title,'id': id})
         data = {'info':1}
         event.notify(SendWechatEvent(brains[0].getObject()))
         return json.dumps(data)

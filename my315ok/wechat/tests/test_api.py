@@ -41,14 +41,16 @@ class setupbase(unittest.TestCase):
         portal['productfolder1'].invokeFactory('my315ok.products.product','product2',title="Jpeg image",description="a jpeg image")
 #        portal['productfolder1'].invokeFactory('my315ok.products.product','product3',title="Png image",description="a png image")        
 
-        data = getFile('image.gif').read()
+        data = getFile('image.png').read()
         item = portal['productfolder1']['product1']
-        item.image = NamedImage(data, 'image/gif', u'image.gif')
-        item.text = "<p>test send dexterity object</p>"        
+        item.image = NamedImage(data, 'image/png', u'image.png')
+        item.text = "<p>test send dexterity object</p>"
+        item.reindexObject(idxs=["text"])        
         data2 = getFile('image.jpg').read()        
         item2 = portal['productfolder1']['product2']
         item2.image = NamedImage(data2, 'image/jpeg', u'image.jpg')
-        item2.text = "<p>test send dexterity object</p>"  
+        item2.text = "<p>test send dexterity object</p>"
+        item2.reindexObject(idxs=["text"])            
 
         portal.invokeFactory('News Item','news1',
                                          title=u"news1",

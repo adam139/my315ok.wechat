@@ -22,7 +22,7 @@
 
       	<div id="ajaxsend" style="display: none" 
       		tal:attributes="data-ajax-target string:${portal_url}/@@ajax_send_weixin;
-      		data-ajax-id context/id"></div>
+      		data-ajax-id context/id;data-title context/title"></div>
       </div>
 		<div>
 			<button id="send" class="btn btn-primary" type="button" data-toggle="dropdown">发送微信</button>
@@ -32,8 +32,9 @@
 		<script type="text/javascript">
 		function sendchat() {        
      var action = $("#ajaxsend").attr('data-ajax-target');
-     var id = $("#ajaxsend").attr('data-ajax-id');
-     var senddata = {"id":id}	;
+     var id = $("#ajaxsend").attr('data-ajax-id');     
+     var title = $("#ajaxsend").attr('data-title');
+     var senddata = {"id":id,"title":title}	;
      $.post(action, 
            senddata,
            function(data) {

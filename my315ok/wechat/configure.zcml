@@ -32,6 +32,13 @@
       description="Installs the my315ok.wechat package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+  <genericsetup:registerProfile
+      name="uninstall"
+      title="my315ok.wechat"
+      directory="profiles/uninstall"
+      description="Uninstalls my315ok.wechat package"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />      
   <i18n:registerTranslations directory="locales" />      
   <include package=".browser" />
   <!-- -*- cusomize indexer -*- -->
