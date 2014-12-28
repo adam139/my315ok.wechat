@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 from five import grok
-from zope.annotation.interfaces import IAnnotations
-from zope.annotation.interfaces import IAttributeAnnotatable
-from zope.interface import alsoProvides, implements
-from zope.component import adapts 
 
-from Products.CMFCore.interfaces import IContentish
-from Products.ATContentTypes.interfaces import IATNewsItem
+from zope.interface import alsoProvides, implements
+from zope.component import adapts
 from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
 
 import time
 import requests
-#from cStringIO import StringIO
-#from PIL import Image
+
 
 from requests.compat import json as _json
 from my315ok.wechat.utilities import to_text
@@ -44,13 +39,13 @@ appsecret = "b66e860a24452f782dc40d3daab6a79a"
 
 class Client(object):
     """
-    微信 API 操作类
+    微信 API 操作类，适应单一公众号
     通过这个类可以方便的通过微信 API 进行一系列操作，比如主动发送消息、创建自定义菜单等
     """
     implements(Iweixinapi)
     adapts(ISendCapable)
+    
     def __init__(self, context):
-
         self.cotext = context
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IwechatSettings)
@@ -63,6 +58,8 @@ class Client(object):
             self.appsecret = appsecret
         else:
             self.appsecret = settings.appsecret
+#        self.appid = 'wx0ed81f0fc9784dde'
+#        self.appsecret = 'eadfe63cf63e8048913a334f8e960ff2'
         self._token = None
         self.token_expires_at = None
 
@@ -582,7 +579,7 @@ class Client(object):
 
 from dexterity.membrane.content.member import IMember
 class WeiXinApi(Client):
-    """参数appid,appsecret通过构造函数传入
+    """参数appid,appsecret通过member传入
     """
     implements(IweixinapiMember)
     adapts(ISendAllCapable,IMember)

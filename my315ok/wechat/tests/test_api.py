@@ -92,13 +92,13 @@ class setupbase(unittest.TestCase):
 
         self.portal = portal
         from my315ok.wechat.interfaces import ISendCapable
-#        obj = portal['news1']
-##        import pdb
-##        pdb.set_trace()
-#        if not(ISendCapable.providedBy(obj)):
-#            from zope.interface import alsoProvides
-#            alsoProvides(obj,ISendCapable)
-#        self.api = Iweixinapi(obj)        
+        obj = portal['news1']
+#        import pdb
+#        pdb.set_trace()
+        if not(ISendCapable.providedBy(obj)):
+            from zope.interface import alsoProvides
+            alsoProvides(obj,ISendCapable)
+        self.api = Iweixinapi(obj)        
 #        self.api = Iweixinapi(portal['news1'])    
 
 class Allcontents(setupbase):
@@ -229,7 +229,7 @@ class Allcontents(setupbase):
             # image data
             virf = StringIO(rt.content)
             imgobj = Image.open(virf)
-            filename = "qrcode.jpg" 
+            filename = "qrcode2.jpg" 
             imgfile = putFile(filename)
             imgobj.save(imgfile)
 

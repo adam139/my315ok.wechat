@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from zope.component import getMultiAdapter
+#from zope.component import getMultiAdapter
 from cStringIO import StringIO
 from PIL import Image
 
@@ -23,8 +23,7 @@ class Content(object):
             api is weixin api,
         return mediaid
         """
-#        obj = self.obj
-#        api = self.api
+
         try:
             imgobj = self.image_data(obj)
             imgobj = Image.open(imgobj)
@@ -56,8 +55,7 @@ class Content(object):
             obj = self.obj
             api = self.api
             text = self.text(obj)
-#            import pdb
-#            pdb.set_trace()
+
             mid = self.upload_image(api,obj)            
             news_parameters ={}    # declare a news item parameters
             news_parameters["thumb_media_id"] = mid

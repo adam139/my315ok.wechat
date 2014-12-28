@@ -139,7 +139,7 @@ def getAllMember(obj):
 def pushWeixin(obj, event):
     """send obj's content as message of the Wechat"""
     from my315ok.wechat.interfaces import ISendAllCapable
-
+    import time
     if not(ISendAllCapable.providedBy(obj)):
         from zope.interface import alsoProvides
         alsoProvides(obj,ISendAllCapable)        
@@ -147,7 +147,8 @@ def pushWeixin(obj, event):
     if IATNewsItem.providedBy(obj):
         
         for member in getAllMember(obj):
- 
+#            import pdb
+#            pdb.set_trace()
             member = member.getObject()
             api = queryMultiAdapter((obj, member), IweixinapiMember)
             if api == None: break
@@ -162,6 +163,7 @@ def pushWeixin(obj, event):
             data["mpnews"] = atnews.upload_news()
             data["msgtype"] = "mpnews"        
             api.send_by_openid(data)
+            time.sleep(5)
             
     elif IATDocument.providedBy(obj):
         for member in getAllMember(obj):
@@ -212,7 +214,9 @@ def pushWeixin(obj, event):
             data["touser"] = followers
             data["mpnews"] = atnews.upload_news()
             data["msgtype"] = "mpnews"        
-            api.send_by_openid(data)                    
+            api.send_by_openid(data)
+    else:
+        pass                                        
       
            
         

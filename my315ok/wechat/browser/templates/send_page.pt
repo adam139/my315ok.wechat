@@ -31,11 +31,11 @@
     </div>
   <metal:js fill-slot="javascript_bottom_slot">
 		<script type="text/javascript">
-		function sendchat() {        
+		function sendchat(type) {        
      var action = $("#ajaxsend").attr('data-ajax-target');
      var id = $("#ajaxsend").attr('data-ajax-id');     
      var title = $("#ajaxsend").attr('data-title');
-     var type = $this.attr('data-type')
+
      var senddata = {"id":id,"title":title,"type":type}	;
      $.post(action, 
            senddata,
@@ -46,7 +46,8 @@
 }
 $(document).ready(function(){
 $("#send button").on("click",function() {
-                    sendchat();
+     var type = $(this).attr('data-type');
+                    sendchat(type);
                     return false;      
 })      
 })	  	
