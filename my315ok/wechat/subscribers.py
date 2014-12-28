@@ -2,62 +2,22 @@
 from five import grok
 from zope import event
 import zope.interface
-from zope.component import getMultiAdapter
+from zope.component import queryMultiAdapter
 from Products.ATContentTypes.interfaces import IATNewsItem,IATDocument
 from plone.dexterity.interfaces import IDexterityContent
-from my315ok.wechat.interfaces import Iweixinapi
+from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
 
-from my315ok.wechat.events import ISendWechatEvent,IReceiveWechatEvent
-#from Products.ATContentTypes.interfaces import IATNewsItem
-from my315ok.wechat.weixinapi import check_error
-from my315ok.wechat.tests.test_api import putFile,getFile
+from my315ok.wechat.events import ISendWechatEvent,ISendAllWechatEvent,IReceiveWechatEvent
 
 from my315ok.products.product import Iproduct
 from my315ok.products.productfolder import Iproductfolder
 
-from cStringIO import StringIO
-from PIL import Image
-
 from plone.dexterity.utils import createContentInContainer          
-
-def uploadImage(api,obj):
-    """
-    upload current object's image field to wechat server as image media,
-    parameters: 
-        context is current object that contained a images field,
-        api is weixin api,
-    return mediaid
-    """  
-
-
-    try:
-        if IATNewsItem.providedBy(obj):
-            imgobj = StringIO(obj.getImage().data)
-        else:
-            imgobj = StringIO(obj.image.data)
-        imgobj = Image.open(imgobj)
-        suffix = (imgobj.format).lower()
-        filename = "news.%s" % suffix
-        imgfile = putFile(filename)
-        imgobj.save(imgfile)
-        del imgobj
-        filename = open(imgfile,'r')
-    except:
-            filename = getFile("avatar_default.jpg")
-
-    try:
-        rt = api.upload_media('image',filename)
-        filename.close()
-        rt = check_error(rt)
-        mid = rt["media_id"]
-        return mid
-    except:
-        raise Exception("some error:can't upload image")
-
+from my315ok.wechat.pushmessage import Content,DexterityItem,DexterityContainer
 
 @grok.subscribe(IReceiveWechatEvent)
 def ReceiveWechatEvent(eventobj):
-    """this event be fired by member join event, username,address password parameters to create a membrane object"""
+    """this event be fired when a message arrived wechat platform"""
     
     from my315ok.wechat.browser.receive import BaseRoBot,StoreMessage 
     from Products.ATContentTypes.interfaces import IATNewsItem
@@ -65,8 +25,10 @@ def ReceiveWechatEvent(eventobj):
     from Products.CMFCore.utils import getToolByName
     from my315ok.wechat.events import SendWechatEvent
     site = getSite()
-    robot = BaseRoBot(token="plone2018")
+    # 答复消息
+    robot = BaseRoBot(token="plone2018")   
     
+    #we directly answer a news item to client when we receive a text type message.
     @robot.text
     def echo(message):        
         catalog = getToolByName(site,'portal_catalog')
@@ -74,15 +36,13 @@ def ReceiveWechatEvent(eventobj):
             newest = catalog.unrestrictedSearchResults({'object_provides': IATNewsItem.__identifier__})
             return newest[0].getObject()
         except:
-            return
-
-              
+            return              
     reply = robot.get_reply(eventobj.message)
     del robot
-#    event.notify(SendWechatEvent(reply))
-    
+
+  # 保存消息    
     storer = StoreMessage()
-    # 文本消息，保存为textmessage对象
+    # 文本消息handler，保存为textmessage对象
     @storer.text
     def create_text_message(message):
         folder = storer.get_folder(site)
@@ -96,8 +56,7 @@ def ReceiveWechatEvent(eventobj):
             item.MsgId = mid
             return True            
         except:
-            return  False
-            
+            return  False          
 
     return storer.store_message(eventobj.message)
 
@@ -112,37 +71,104 @@ def sendnews(obj, event):
         api = Iweixinapi(obj)
     # if news item create articles data (IATNewsItem)
         if IATNewsItem.providedBy(obj):
-            text = obj.getText()
-
-            mid = uploadImage(api,obj)            
-            news_parameters ={}    # declare a news item parameters
-            news_parameters["thumb_media_id"] = mid
-            news_parameters["author"] = "admin"
-            news_parameters["title"] = obj.Title
-            news_parameters["content_source_url"] = obj.absolute_url()
-            news_parameters["content"] = text
-            news_parameters["digest"] = obj.Description
-            news_parameters["show_cover_pic"] = "1"
-            ars = [] # article array, member item is a news item
-            ars.append(news_parameters)
-            data = {}
-            data["articles"] = ars
-            del ars   #free ram storage   
-        
-            newsid = api.upload_news(data)
-            newsdic = {}
-            newsdic["media_id"] = newsid
+            at = Content(api,obj)
             data = {}
             try:
                 followers = api.get_followers()['data']['openid']
             except:
                 raise Exception("some error")        
             data["touser"] = followers
-            data["mpnews"] = newsdic
+#            data["mpnews"] = newsdic
+            data["mpnews"] = at.upload_news()           
             data["msgtype"] = "mpnews"        
             api.send_by_openid(data)
             
         elif  IATDocument.providedBy(obj):
+            text = obj.getText()
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")
+            for toid in followers:
+                self.api.send_text_message(toid,text)                
+                
+    # if is dexterity content object
+        elif Iproduct.providedBy(obj):
+            at = DexterityItem(api,obj)
+            data = {}
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")        
+            data["touser"] = followers
+            data["mpnews"] = at.upload_news()           
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)
+            
+        elif  Iproductfolder.providedBy(obj):
+            atnews = DexterityContainer(api,obj)
+            data = {}
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")        
+            data["touser"] = followers
+            data["mpnews"] = atnews.upload_news()
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)
+        else:
+            pass                              
+                          
+def getAllMember(obj):
+    """call member_folderview for get all dexterity member brains"""
+    from Products.CMFCore.utils import getToolByName
+    from dexterity.membrane.content.memberfolder import IMemberfolder 
+    from dexterity.membrane.content.member import IMember
+   
+    request = getattr(obj, "REQUEST", None)
+            #call product folder view
+    # fetch member folder object
+    catalog = getToolByName(obj, "portal_catalog")
+    brains = catalog(object_provides=IMemberfolder.__identifier__)
+    folder = brains[0].getObject()    
+    folderview = queryMultiAdapter((folder, request),name=u"admin_view")
+    subitems = folderview.getMemberBrains()   
+    return subitems
+
+@grok.subscribe(zope.interface.Interface, ISendAllWechatEvent)
+def pushWeixin(obj, event):
+    """send obj's content as message of the Wechat"""
+    from my315ok.wechat.interfaces import ISendAllCapable
+
+    if not(ISendAllCapable.providedBy(obj)):
+        from zope.interface import alsoProvides
+        alsoProvides(obj,ISendAllCapable)        
+        
+    if IATNewsItem.providedBy(obj):
+        
+        for member in getAllMember(obj):
+ 
+            member = member.getObject()
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: break
+            atnews = Content(api,obj)
+
+            data = {}
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")        
+            data["touser"] = followers
+            data["mpnews"] = atnews.upload_news()
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)
+            
+    elif IATDocument.providedBy(obj):
+        for member in getAllMember(obj):
+ 
+            member = member.getObject()            
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: break
 
             text = obj.getText()
             try:
@@ -153,83 +179,40 @@ def sendnews(obj, event):
             for toid in followers:
                 self.api.send_text_message(toid,text)
                 # if is dexterity content object
-        elif Iproduct.providedBy(obj):
+    elif Iproduct.providedBy(obj):
+        for member in getAllMember(obj):
+ 
+            member = member.getObject()            
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: break
+            atnews = DexterityItem(api,obj)
 
-            try:
-                text = obj.text.output
-            except:
-                text = obj.text                
-            mid = uploadImage(api,obj)            
-            news_parameters ={}    # declare a news item parameters
-            news_parameters["thumb_media_id"] = mid
-            news_parameters["author"] = "admin"
-            news_parameters["title"] = obj.Title
-            news_parameters["content_source_url"] = obj.absolute_url()
-            news_parameters["content"] = text
-            news_parameters["digest"] = obj.Description
-            news_parameters["show_cover_pic"] = "1"
-            ars = [] # article array, member item is a news item
-            ars.append(news_parameters)
-            data = {}
-            data["articles"] = ars
-            del ars   #free ram storage   
-        
-            newsid = api.upload_news(data)
-            newsdic = {}
-            newsdic["media_id"] = newsid
             data = {}
             try:
                 followers = api.get_followers()['data']['openid']
             except:
                 raise Exception("some error")        
             data["touser"] = followers
-            data["mpnews"] = newsdic
+            data["mpnews"] = atnews.upload_news()
             data["msgtype"] = "mpnews"        
             api.send_by_openid(data)
-        elif  Iproductfolder.providedBy(obj):
+    elif Iproductfolder.providedBy(obj):
+        for member in getAllMember(obj):
+ 
+            member = member.getObject()
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: break
+            atnews = DexterityContainer(api,obj)
 
-            request = getattr(obj, "REQUEST", None)
-            folderview = getMultiAdapter((obj, request),name=u"view")
-            subitems = folderview.prdt_images()
-            ars = [] # article array, member item is a news item 
-            k = 0           
-            for obj in subitems:
-                k = k+1
-                if k > 3:break    # max is 10 newsitems
-
-                mid = uploadImage(api,obj.getObject())            
-                news_parameters ={}    # declare a news item parameters
-                news_parameters["thumb_media_id"] = mid
-                news_parameters["author"] = "admin"
-                news_parameters["title"] = obj.Title
-                news_parameters["content_source_url"] = obj.getPath()
-                news_parameters["content"] = obj.text
-                news_parameters["digest"] = obj.Description
-                news_parameters["show_cover_pic"] = "1"
-                ars.append(news_parameters)
-            data = {}
-            data["articles"] = ars
-            del ars   #free ram storage   
-        
-            newsid = api.upload_news(data)
-            newsdic = {}
-            newsdic["media_id"] = newsid
             data = {}
             try:
                 followers = api.get_followers()['data']['openid']
             except:
                 raise Exception("some error")        
             data["touser"] = followers
-            data["mpnews"] = newsdic
-            data["msgtype"] = "mpnews"
-        
-            api.send_by_openid(data)                
-                          
-            
-            
-            
-                                    
-
+            data["mpnews"] = atnews.upload_news()
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)                    
       
            
         

@@ -289,16 +289,14 @@ class Robot(BrowserView):
         pdb.set_trace()
         
         self.context = context
-        self.request = request
-  
+        self.request = request  
     
     def error(self):
         return "errror 403"
     
     def echo(self):
         data = self.request.form
-        return data["echostr"]
-        
+        return data["echostr"]        
         
     def outxml(self):
 #        data = self.request.form

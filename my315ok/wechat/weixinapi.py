@@ -7,7 +7,7 @@ from zope.component import adapts
 
 from Products.CMFCore.interfaces import IContentish
 from Products.ATContentTypes.interfaces import IATNewsItem
-from my315ok.wechat.interfaces import Iweixinapi
+from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
 
 import time
 import requests
@@ -16,7 +16,7 @@ import requests
 
 from requests.compat import json as _json
 from my315ok.wechat.utilities import to_text
-from my315ok.wechat.interfaces import ISendCapable
+from my315ok.wechat.interfaces import ISendCapable,ISendAllCapable
 
 
 class ClientException(Exception):
@@ -578,8 +578,22 @@ class Client(object):
         
         url="https://api.weixin.qq.com/cgi-bin/message/mass/send"
         self.post(url=url,data=data)
-            
-            
-            
+                        
+
+from dexterity.membrane.content.member import IMember
+class WeiXinApi(Client):
+    """参数appid,appsecret通过构造函数传入
+    """
+    implements(IweixinapiMember)
+    adapts(ISendAllCapable,IMember)
+        
+    def __init__(self,context,member):
+        self.cotext = context
+        self.member = member
+        self.appid = member.appid
+        self.appsecret = member.appsecret  
+        self._token = None
+        self.token_expires_at = None        
+                   
             
             

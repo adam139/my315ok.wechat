@@ -17,6 +17,12 @@
     provides=".interfaces.Iweixinapi"
     for=".interfaces.ISendCapable"     
    		 /> 
+		<adapter
+    factory="my315ok.wechat.weixinapi.WeiXinApi"
+    provides=".interfaces.IweixinapiMember"
+    for=".interfaces.ISendAllCapable
+         dexterity.membrane.content.member.IMember"     
+   		 />    		 
     
   <!--    for="Products.CMFCore.interfaces.IContentish" Register the control panel for My315ok wechat settings -->
   <browser:page
@@ -41,6 +47,8 @@
       />      
   <i18n:registerTranslations directory="locales" />      
   <include package=".browser" />
+  <include package=".behaviors" />
+    
   <!-- -*- cusomize indexer -*- -->
   <adapter factory=".content.menu.istopmenu" name="istopmenu" /> 
   <adapter factory=".content.message.FromUserName" name="FromUserName" />            

@@ -99,10 +99,21 @@ class Iweixinapi(zope.interface.Interface):
     api marker interface
     """    
 
-class ISendCapable(IContentish,IDexterityContent):
+class IweixinapiMember(zope.interface.Interface):
     """
-    marker interface,mark a object may send its content as wechat
+    api marker interface
+    """   
+
+class ISendAllCapable(zope.interface.Interface):
+    """
+    marker interface for context so the context can be sent as weixin through all public account. 
+    """   
+    
+class ISendCapable(zope.interface.Interface):
+    """
+    marker interface,mark a object may send its content as wechat through system public account.
     """          
+
 
 class IwechatSettings(zope.interface.Interface):
     """Describes registry records
@@ -125,6 +136,12 @@ class ISendWechatEvent(zope.interface.Interface):
     """
     a send wechat event mark interface.
     """  
+    
+class ISendAllWechatEvent(zope.interface.Interface):
+    """
+    a send wechat event mark interface by multiple public account.
+    """  
+        
 class IReceiveWechatEvent(zope.interface.Interface):
     """
     a receive wechat event mark interface.

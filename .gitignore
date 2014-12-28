@@ -3,6 +3,10 @@
 /develop-eggs
 /bin
 /.settings
+news.gif
+news.png
+news.jpeg
+qrcode.jpg
 *.pyc
 *.egg
 *.egg-info

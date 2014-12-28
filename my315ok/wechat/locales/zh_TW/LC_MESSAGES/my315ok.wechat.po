@@ -1,0 +1,97 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: wechat\n"
+"POT-Creation-Date: 2014-11-05 09:35+0000\n"
+"PO-Revision-Date: 2014-11-05 17:37+0800\n"
+"Last-Translator: adam <yuejun.tang@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: en\n"
+"Language-Name: English\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: DOMAIN\n"
+"X-Poedit-Language: Chinese\n"
+
+#: ./profiles/default/types/my315ok.wechat.content.menufolder.xml
+msgid "A container that contain weixin menus"
+msgstr "一个包含微信自定义菜单的容器"
+
+#: ./browser/templates/menu_folder.pt:27
+msgid "Add menu item"
+msgstr "添加菜单"
+
+#: ./profiles/default/actions.xml
+msgid "Send as Wechat"
+msgstr "发送微信"
+
+#: ./controlpanel.py:17
+msgid "Wechat control panel"
+msgstr "微信控制面板"
+
+#: ./profiles/default/controlpanel.xml
+msgid "Wechat settings"
+msgstr "微信设置"
+
+#: ./profiles/default/types/my315ok.wechat.content.menu.xml
+msgid "a menu item for weixin self-define menu"
+msgstr "微信菜单"
+
+#: ./interfaces.py:103
+msgid "app id"
+msgstr "微信appid"
+
+#: ./interfaces.py:107
+msgid "app secret"
+msgstr ""
+
+#: ./vocabulary.py:12
+msgid "click event"
+msgstr "点击推送"
+
+#: ./vocabulary.py:26
+msgid "is not top menu"
+msgstr "子菜单"
+
+#: ./vocabulary.py:25
+msgid "is top menu"
+msgstr "主菜单"
+
+#: ./content/menu.py:29
+msgid "is top menu?"
+msgstr "是主菜单吗？"
+
+#: ./content/menu.py:33
+msgid "key value of the menu"
+msgstr "菜单项key值"
+
+#: ./profiles/default/types/my315ok.wechat.content.menu.xml
+msgid "menu"
+msgstr "菜单"
+
+#: ./content/menu.py:25
+msgid "menu type"
+msgstr "菜单类型"
+
+#: ./profiles/default/types/my315ok.wechat.content.menufolder.xml
+msgid "menufolder"
+msgstr "菜单文件夹"
+
+#: ./content/menu.py:35
+msgid "the menu link to url"
+msgstr "菜单项跳转url"
+
+#: ./vocabulary.py:13
+msgid "view skip event"
+msgstr "视图跳转"
+
+#: ./interfaces.py:104
+msgid "weixin app id"
+msgstr "微信appid"
+
+#: ./interfaces.py:108
+msgid "weixin app secret"
+msgstr "微信app secret"
+

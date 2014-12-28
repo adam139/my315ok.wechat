@@ -10,7 +10,7 @@ from zope import event
 from Products.ATContentTypes.content.newsitem import ATNewsItem
 from Products.ATContentTypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import ISendWechatEvent
-from my315ok.wechat.events import SendWechatEvent
+from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent
 from my315ok.wechat.content.menufolder import IMenufolder
 from my315ok.wechat.interfaces import Iweixinapi
 from my315ok.wechat.weixinapi import check_error
@@ -19,7 +19,10 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 
 class AjaxSend(grok.View):
-    """AJAX action: send current to weixin.
+    """AJAX action: send current context to weixin.
+    may select two ways:
+    1 send by system public account;
+    2 send by all member's public account;
     """
     
     grok.context(INavigationRoot)
@@ -32,12 +35,16 @@ class AjaxSend(grok.View):
         title = data['title']        
         catalog = getToolByName(self.context, 'portal_catalog')
         brains = catalog({'Title': title,'id': id})
-        data = {'info':1}
-        event.notify(SendWechatEvent(brains[0].getObject()))
+        type = data['type']
+        if type == "system":
+            event.notify(SendWechatEvent(brains[0].getObject()))
+        else:
+            event.notify(SendAllWechatEvent(brains[0].getObject()))
+        data = {'info':1}        
         return json.dumps(data)
     
 class AjaxCreate(grok.View):
-    """AJAX action: send current to weixin.
+    """AJAX action: create self-define menu for weixin.
     """
     
     grok.context(IMenufolder)
@@ -111,15 +118,18 @@ class AjaxCreate(grok.View):
                 
             menu_data['button'].append(topitem)
             
-        catalog = getToolByName(self.context, 'portal_catalog')
-#        import pdb
-#        pdb.set_trace()
+#        catalog = getToolByName(self.context, 'portal_catalog')
+        from my315ok.wechat.interfaces import ISendCapable
+        if not(ISendCapable.providedBy(self.context)):
+            from zope.interface import alsoProvides
+            alsoProvides(self.context,ISendCapable)
+        api = Iweixinapi(self.context)
         # get a menu item
-        brains = catalog({'object_provides': IATNewsItem.__identifier__,
-                                  'limit': 1})
-        menu = brains[0].getObject()
+#        brains = catalog({'object_provides': IATNewsItem.__identifier__,
+#                                  'limit': 1})
+#        menu = brains[0].getObject()
         # get wechat api adapter
-        api = Iweixinapi(menu)
+#        api = Iweixinapi(menu)
         try:
             mdata = api.get_menu()
           #has old menu

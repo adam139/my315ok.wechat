@@ -24,8 +24,9 @@
       		tal:attributes="data-ajax-target string:${portal_url}/@@ajax_send_weixin;
       		data-ajax-id context/id;data-title context/title"></div>
       </div>
-		<div>
-			<button id="send" class="btn btn-primary" type="button" data-toggle="dropdown">发送微信</button>
+		<div id="send">
+			<button  class="btn btn-primary" type="button" data-type="system">系统账号发送微信</button>
+			<button  class="btn btn-primary" type="button" data-type="member">所有成员发送微信</button>
 		</div>
     </div>
   <metal:js fill-slot="javascript_bottom_slot">
@@ -34,7 +35,8 @@
      var action = $("#ajaxsend").attr('data-ajax-target');
      var id = $("#ajaxsend").attr('data-ajax-id');     
      var title = $("#ajaxsend").attr('data-title');
-     var senddata = {"id":id,"title":title}	;
+     var type = $this.attr('data-type')
+     var senddata = {"id":id,"title":title,"type":type}	;
      $.post(action, 
            senddata,
            function(data) {
@@ -43,7 +45,7 @@
             'json');
 }
 $(document).ready(function(){
-$("#send").on("click",function() {
+$("#send button").on("click",function() {
                     sendchat();
                     return false;      
 })      
