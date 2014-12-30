@@ -236,7 +236,32 @@ class Allcontents(setupbase):
         except:
             raise Exception("show qrcode error")
         
-        
+    def test_ajax_download_qrcode(self):
+        from zope.component import getUtility
+        from plone.keyring.interfaces import IKeyManager
+        import json
+        import hmac
+        from hashlib import sha1 as sha
+        from plone.app.testing import TEST_USER_ID, login, TEST_USER_NAME, \
+    TEST_USER_PASSWORD, setRoles
+        from plone.testing.z2 import Browser                
+        request = self.layer['request']        
+        keyManager = getUtility(IKeyManager)
+        secret = keyManager.secret()
+        auth = hmac.new(secret, TEST_USER_NAME, sha).hexdigest()
+        request.form = {
+                        '_authenticator': auth,
+                        'id': 'member1',
+
+                                                                       
+                        }
+# Look up and invoke the view via traversal
+        view = self.portal['memberfolder']['member1'].restrictedTraverse('@@ajaxuploadqrcode')
+        result = view()
+        import pdb
+        pdb.set_trace()
+
+        self.assertEqual(json.loads(result)['info'],1)        
                 
       
     

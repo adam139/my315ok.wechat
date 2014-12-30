@@ -103,6 +103,10 @@ class IweixinapiMember(zope.interface.Interface):
     """
     api marker interface
     """   
+class IMemberWeiXinApi(zope.interface.Interface):
+    """
+    api marker interface ,provide wechat api adapter member object. 
+    """   
 
 class ISendAllCapable(zope.interface.Interface):
     """

@@ -13,4 +13,12 @@
         provides=".wechat_token.IWechatApiKey"        
         factory=".wechat_token.WechatApiKey" 
         for="dexterity.membrane.content.member.IMember"/>
+ 	<plone:behavior
+				title="Qrcode image"
+				description="wechat qrcode image and image caption fields"
+				provides=".qrcode.IQrcode"
+				factory=".qrcode.Qrcode"
+				for="plone.dexterity.interfaces.IDexterityContent"
+				marker=".qrcode.IQrcode"/>  
+      
 </configure>

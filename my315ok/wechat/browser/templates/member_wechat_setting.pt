@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="here/main_template/macros/master"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"      
+      i18n:domain="my315ok.wechat">        
+
+<body>
+<metal:main fill-slot="main">
+    <tal:main-macro metal:define-macro="main" >
+
+       <section id="profile">
+       <div class="page-header">
+           <h3 i18n:translate="">member wechat configuration information</h3>           
+       </div>  
+       <div class="row-fluid">
+        <div class="span7">            
+            <tal:block condition="context/appid">
+            <dt i18n:translate="">appid</dt>
+            <dd tal:content="context/appid"></dd>
+            <dt i18n:translate="">appsecret</dt>
+            <dd tal:content="context/appsecret"></dd>
+            <dt i18n:translate="">token</dt>
+            <dd tal:content="context/token"></dd>                        
+            </tal:block>
+        </div>
+        <div class="span5">          
+				<div class="Image" tal:condition="view/available">
+					<img tal:define="scale context/@@images"
+						tal:replace="structure python: scale.scale('image', width=200, height=200).tag(css_class='qrcodeImage')" />
+				</div>
+				<div id="download" tal:condition="not:view/available"
+					tal:attributes="data-ajax-target python:context.absolute_url() + '/@@ajaxuploadqrcode';
+					data-ajax-id context/id">
+					<button  class="btn btn-primary" type="button" data-type="system">下载二维码</button>
+				</div>			                   
+         </div>
+        </div>
+        <div class="row-fluid">                              
+          <div class="span2 buttonOverlay">
+          	<a tal:attributes="href python:context.absolute_url() + '/@@settingsajaxedit'" 
+          		i18n:domain="plone" 
+          		i18n:translate="" title="Edit">Edit</a>          	         	
+          </div>       
+      </div>
+      </section>       
+    </tal:main-macro>
+</metal:main>
+<metal:js fill-slot="javascript_bottom_slot">
+		<script type="text/javascript">
+		function sendchat() {        
+     var action = $("#download").attr('data-ajax-target');
+     var id = $("#download").attr('data-ajax-id');
+     var senddata = {"id":id}	;
+     $.post(action, 
+           senddata,
+           function(data) {
+           	if (data['info']==1) {location.reload();}
+            },
+            'json');
+}
+$(document).ready(function(){
+$("#download button").on("click",function() {
+                    sendchat();
+                    return false;      
+})      
+})	  	
+	</script>
+	</metal:js>
+</body>
+</html>

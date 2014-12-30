@@ -12,7 +12,8 @@ from Products.ATContentTypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import ISendWechatEvent
 from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent
 from my315ok.wechat.content.menufolder import IMenufolder
-from my315ok.wechat.interfaces import Iweixinapi
+from dexterity.membrane.content.member import IMember
+from my315ok.wechat.interfaces import Iweixinapi,IMemberWeiXinApi
 from my315ok.wechat.weixinapi import check_error
 
 from Products.statusmessages.interfaces import IStatusMessage
@@ -25,7 +26,7 @@ class AjaxSend(grok.View):
     2 send by all member's public account;
     """
     
-    grok.context(INavigationRoot)
+    grok.context(IMember)
     grok.name('ajax_send_weixin')
     grok.require('zope2.View')
         
@@ -43,6 +44,51 @@ class AjaxSend(grok.View):
         data = {'info':1}        
         return json.dumps(data)
     
+class AjaxQrcode(grok.View):
+    """AJAX action: send current context to weixin.
+    may select two ways:
+    1 send by system public account;
+    2 send by all member's public account;
+    """
+    
+    grok.context(IMember)
+    grok.name('ajaxuploadqrcode')
+    grok.require('zope2.View')
+        
+    def render(self):
+        data = self.request.form
+        id = data['id']
+        import pdb
+        pdb.set_trace()     
+#        catalog = getToolByName(self.context, 'portal_catalog')
+#        brains = catalog({'id': id,'object_provides':IMember.__identifier__})
+#        obj = brains.getObject()
+#        from my315ok.wechat.interfaces import ISendCapable
+#        if not(ISendCapable.providedBy(self.context)):
+#            from zope.interface import alsoProvides
+#            alsoProvides(self.context,ISendCapable)
+        api = IMemberWeiXinApi(self.context)
+        data = {"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 123}}}
+        qr = api.create_qrcode(data)
+        try:
+            ticket=check_error(qr)['ticket']
+#            import pdb
+#            pdb.set_trace()
+            rt = api.show_qrcode(ticket)
+            # image data
+            dt = rt.content
+            from plone import namedfile
+            self.context.image = namedfile.NamedBlobImage(dt,filename=u"qrcode.jpg")
+#            self.context.data = rt.content
+            data = {'info':1}        
+            return json.dumps(data)
+
+        except:
+            raise Exception("show qrcode error")                
+
+
+
+
 class AjaxCreate(grok.View):
     """AJAX action: create self-define menu for weixin.
     """

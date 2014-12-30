@@ -16,7 +16,12 @@
     factory="my315ok.wechat.weixinapi.Client"
     provides=".interfaces.Iweixinapi"
     for=".interfaces.ISendCapable"     
-   		 /> 
+   		 />
+		<adapter
+    factory="my315ok.wechat.weixinapi.MemberWeiXinApi"
+    provides=".interfaces.IMemberWeiXinApi"
+    for="dexterity.membrane.content.member.IMember"     
+   		 />      		  
 		<adapter
     factory="my315ok.wechat.weixinapi.WeiXinApi"
     provides=".interfaces.IweixinapiMember"

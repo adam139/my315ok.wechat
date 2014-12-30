@@ -3,7 +3,7 @@ from five import grok
 
 from zope.interface import alsoProvides, implements
 from zope.component import adapts
-from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
+from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember,IMemberWeiXinApi
 
 import time
 import requests
@@ -592,5 +592,17 @@ class WeiXinApi(Client):
         self._token = None
         self.token_expires_at = None        
                    
-            
+class MemberWeiXinApi(Client):
+    """参数appid,appsecret通过member传入
+    """
+    implements(IMemberWeiXinApi)
+    adapts(IMember)
+        
+    def __init__(self,context):
+        self.cotext = context
+
+        self.appid = context.appid
+        self.appsecret = context.appsecret  
+        self._token = None
+        self.token_expires_at = None             
             
