@@ -19,6 +19,13 @@
 				provides=".qrcode.IQrcode"
 				factory=".qrcode.Qrcode"
 				for="plone.dexterity.interfaces.IDexterityContent"
-				marker=".qrcode.IQrcode"/>  
+				marker=".qrcode.IQrcode"/>
+ 	<plone:behavior
+				title="wechat log"
+				description="wechat log"
+				provides=".wechat_log.IWechatLog"
+				factory=".wechat_log.WechatLog"
+				for="plone.dexterity.interfaces.IDexterityContent"
+				marker=".wechat_log.IWechatLog"/>				  
       
 </configure>

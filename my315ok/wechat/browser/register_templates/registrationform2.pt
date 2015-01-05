@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="example.dexterityforms"
+      metal:use-macro="context/main_template/macros/master">
+
+    <metal:block fill-slot="main">
+
+        <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
+
+        <p>Welcome to Backgammon Pizza! We hope you enjoy our food.</p>
+
+        <div id="content-core">
+            <metal:block use-macro="context/@@ploneform-macros/titlelessform">
+            	
+            </metal:block>
+        </div>
+
+    </metal:block>
+
+</html>

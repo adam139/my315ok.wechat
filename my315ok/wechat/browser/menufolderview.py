@@ -45,11 +45,18 @@ class MenufolderView(grok.View):
     def pm(self):
         context = aq_inner(self.context)
         pm = getToolByName(context, "portal_membership")
-        return pm    
+        return pm 
+       
+    @memoize    
+    def getHomeFolder(self):
+        member = self.pm().getAuthenticatedMember()
+        member_id = member.getId()
+        member_folder = self.pm().getHomeFolder(member_id)
+        return member_folder 
             
     @property
     def isEditable(self):
-        return self.pm().checkPermission(permissions.ManagePortal,self.context) 
+        return self.pm().checkPermission(permissions.ModifyPortalContent,self.context) 
 
     @memoize         
     def getMenuFolder(self):
@@ -112,8 +119,8 @@ class MenufolderView(grok.View):
         output = ''
 
         for i in self.get_top_menu():            
-            head="""<div class="btn-group">"""
-            tail = """</ul></div>"""
+            head="""<div class="row"><div class="col-xs-4 btn-group">"""
+            tail = """</ul></div></div>"""
             if self.isexist_submenu(i):                
                 top = """<button class="btn dropdown-toggle" type="button" data-toggle="dropdown">
             %s<span class="caret"></span>

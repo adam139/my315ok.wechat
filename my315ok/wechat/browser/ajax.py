@@ -1,13 +1,13 @@
 #-*- coding: UTF-8 -*-
 from five import grok
 import json
-from plone.app.layout.navigation.interfaces import INavigationRoot
+from Acquisition import aq_inner
 
 from Products.CMFCore.utils import getToolByName
 from zope.component import getMultiAdapter
 
 from zope import event
-from Products.ATContentTypes.content.newsitem import ATNewsItem
+
 from Products.ATContentTypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import ISendWechatEvent
 from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent
@@ -15,9 +15,6 @@ from my315ok.wechat.content.menufolder import IMenufolder
 from dexterity.membrane.content.member import IMember
 from my315ok.wechat.interfaces import Iweixinapi,IMemberWeiXinApi
 from my315ok.wechat.weixinapi import check_error
-
-from Products.statusmessages.interfaces import IStatusMessage
-
 
 class AjaxSend(grok.View):
     """AJAX action: send current context to weixin.
@@ -58,8 +55,8 @@ class AjaxQrcode(grok.View):
     def render(self):
         data = self.request.form
         id = data['id']
-        import pdb
-        pdb.set_trace()     
+#        import pdb
+#        pdb.set_trace()     
 #        catalog = getToolByName(self.context, 'portal_catalog')
 #        brains = catalog({'id': id,'object_provides':IMember.__identifier__})
 #        obj = brains.getObject()
@@ -89,7 +86,7 @@ class AjaxQrcode(grok.View):
 
 
 
-class AjaxCreate(grok.View):
+class AjaxCreateMenu(grok.View):
     """AJAX action: create self-define menu for weixin.
     """
     
@@ -163,19 +160,28 @@ class AjaxCreate(grok.View):
                 topitem['url'] = obj.url
                 
             menu_data['button'].append(topitem)
-            
-#        catalog = getToolByName(self.context, 'portal_catalog')
-        from my315ok.wechat.interfaces import ISendCapable
-        if not(ISendCapable.providedBy(self.context)):
-            from zope.interface import alsoProvides
-            alsoProvides(self.context,ISendCapable)
-        api = Iweixinapi(self.context)
+# fetech member object            
+        context = aq_inner(self.context)
+        pm = getToolByName(context, "portal_membership")
+        pc = getToolByName(context, "portal_catalog")
+        member = pm.getAuthenticatedMember()
+        member_id = member.getId()
+#        import pdb
+#        pdb.set_trace()
+        bn = pc({'object_provides': IMember.__identifier__,'email':member_id})
+        
+        # first using myself appid
+        try:
+            api = IMemberWeiXinApi(bn[0].getObject())
+            # second using system appid
+        except:
+            from my315ok.wechat.interfaces import ISendCapable
+            if not(ISendCapable.providedBy(self.context)):
+                from zope.interface import alsoProvides
+                alsoProvides(self.context,ISendCapable)
+            api = Iweixinapi(self.context)
         # get a menu item
-#        brains = catalog({'object_provides': IATNewsItem.__identifier__,
-#                                  'limit': 1})
-#        menu = brains[0].getObject()
-        # get wechat api adapter
-#        api = Iweixinapi(menu)
+
         try:
             mdata = api.get_menu()
           #has old menu
@@ -183,10 +189,8 @@ class AjaxCreate(grok.View):
             if rc['errcode'] == 0:
                 rc = check_error(api.create_menu(menu_data))
         except:   #has not old menu
-            rc = check_error(api.create_menu(menu_data))
-                
+            rc = check_error(api.create_menu(menu_data))                
         
         data = {'info':rc['errcode']}
-
         return json.dumps(data)    
          

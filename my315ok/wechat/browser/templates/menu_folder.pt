@@ -19,7 +19,7 @@
       		tal:attributes="data-ajax-target python:context.absolute_url() + '/@@ajax_create_menu';
       		data-ajax-id context/id"></div>				
       <div class="row">
-      	<div class="col-xs-12" tal:content="structure python:view.out_menus()">      	
+      	<div class="col-xs-12 col-sm-12 col-md-6" tal:content="structure python:view.out_menus()">      	
       </div>         
 		 </div>
 		 <div class="row">
