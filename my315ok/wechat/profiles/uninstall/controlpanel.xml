@@ -8,6 +8,6 @@
         title="Wechat settings"
         action_id="my315ok.wechat.wechatsettings"
         appId="my315ok.wechat"
-        remove="True"
+        remove="True">
     </configlet>
 </object>
