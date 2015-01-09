@@ -3,17 +3,20 @@ from five import grok
 from zope import event
 import zope.interface
 from zope.component import queryMultiAdapter
+from Products.CMFCore.utils import getToolByName
 from Products.ATContentTypes.interfaces import IATNewsItem,IATDocument
 from plone.dexterity.interfaces import IDexterityContent
+
 from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
 
-from my315ok.wechat.events import ISendWechatEvent,ISendAllWechatEvent,IReceiveWechatEvent
+from my315ok.wechat.events import ISendWechatEvent,ISendAllWechatEvent,ISendSelfWechatEvent,IReceiveWechatEvent
 
 from my315ok.products.product import Iproduct
 from my315ok.products.productfolder import Iproductfolder
 
 from plone.dexterity.utils import createContentInContainer          
 from my315ok.wechat.pushmessage import Content,DexterityItem,DexterityContainer
+from dexterity.membrane.content.member import IMember
 
 @grok.subscribe(IReceiveWechatEvent)
 def ReceiveWechatEvent(eventobj):
@@ -218,5 +221,95 @@ def pushWeixin(obj, event):
     else:
         pass                                        
       
-           
+@grok.subscribe(zope.interface.Interface, ISendSelfWechatEvent)
+def pushSelfWeixin(obj, event):
+    """send obj's content as message of the Wechat to myself followers"""
+    from my315ok.wechat.interfaces import ISendAllCapable
+    import time
+    if not(ISendAllCapable.providedBy(obj)):
+        from zope.interface import alsoProvides
+        alsoProvides(obj,ISendAllCapable)        
+        
+#    import pdb
+#    pdb.set_trace()
+    pm = getToolByName(obj, "portal_membership")
+    member = pm.getAuthenticatedMember()
+    member_id = member.getId()
+#    catalog = getToolByName(obj, "portal_catalog")
+#    memberbrains = catalog(object_provides=IMember.__identifier__,email=member_id)
+    memberbrains = getAllMember(obj)
+    if len(memberbrains) ==0:return    
+    for bn in memberbrains:
+        if bn.email == member_id:break
+
+    member = bn.getObject()  
+        
+    if IATNewsItem.providedBy(obj):
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: return
+            atnews = Content(api,obj)
+            data = {}
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")        
+            data["touser"] = followers
+            data["mpnews"] = atnews.upload_news()
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)
+            time.sleep(5)
+
+            
+    elif IATDocument.providedBy(obj):
+#        for member in getAllMember(obj):
+# 
+#            member = member.getObject()            
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: return
+
+            text = obj.getText()
+            try:
+                followers = self.api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")
+
+            for toid in followers:
+                self.api.send_text_message(toid,text)
+                # if is dexterity content object
+    elif Iproduct.providedBy(obj):
+#        for member in getAllMember(obj):
+# 
+#            member = member.getObject()            
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: return
+            atnews = DexterityItem(api,obj)
+
+            data = {}
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")        
+            data["touser"] = followers
+            data["mpnews"] = atnews.upload_news()
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)
+    elif Iproductfolder.providedBy(obj):
+#        for member in getAllMember(obj):
+# 
+#            member = member.getObject()
+            api = queryMultiAdapter((obj, member), IweixinapiMember)
+            if api == None: return
+            atnews = DexterityContainer(api,obj)
+
+            data = {}
+            try:
+                followers = api.get_followers()['data']['openid']
+            except:
+                raise Exception("some error")        
+            data["touser"] = followers
+            data["mpnews"] = atnews.upload_news()
+            data["msgtype"] = "mpnews"        
+            api.send_by_openid(data)
+    else:
+        pass             
         

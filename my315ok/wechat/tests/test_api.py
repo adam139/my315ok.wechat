@@ -6,7 +6,7 @@ from plone.app.testing import TEST_USER_ID, setRoles
 
 from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
 from my315ok.wechat.weixinapi import check_error
-from my315ok.wechat.events import SendWechatEvent,SendAllWechatEvent
+from my315ok.wechat.events import SendWechatEvent,SendAllWechatEvent,SendSelfWechatEvent
 from Products.ATContentTypes.interfaces import IATNewsItem
 from Products.ATContentTypes.content.newsitem import ATNewsItem
 from plone.namedfile.file import NamedImage
@@ -189,6 +189,12 @@ class Allcontents(setupbase):
         for toid in followers:
             self.api.send_text_message(toid,text)
         
+#测试按openid群发图dexterity content object: product   
+    def test_selfsendnews_article(self):
+        item = self.portal['productfolder1']
+        event.notify(SendSelfWechatEvent(item))
+
+
 #测试按openid群发图dexterity content object: product   
     def test_sendnews_article(self):
         item = self.portal['productfolder1']

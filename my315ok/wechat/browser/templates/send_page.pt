@@ -21,12 +21,14 @@
       	</div>
 
       	<div id="ajaxsend" style="display: none" 
-      		tal:attributes="data-ajax-target string:${portal_url}/@@ajax_send_weixin;
+      		tal:attributes="data-ajax-target python:context.absolute_url() + '/@@ajax_send_weixin';
       		data-ajax-id context/id;data-title context/title"></div>
       </div>
-		<div id="send">
-			<button  class="btn btn-primary" type="button" data-type="system">系统账号发送微信</button>
-			<button  class="btn btn-primary" type="button" data-type="member">所有成员发送微信</button>
+		<div id="send" class="row">
+			<div class="col-sm-4 col-md-2"><button  class="btn btn-primary" type="button" data-type="system">系统账号发送微信</button></div>
+			<div class="col-sm-4 col-md-2"><button  class="btn btn-primary" type="button" data-type="members">所有成员发送微信</button></div>
+			<div class="col-sm-4 col-md-2"><button  class="btn btn-primary" type="button" data-type="self">我的公众号发送微信</button></div>
+
 		</div>
     </div>
   <metal:js fill-slot="javascript_bottom_slot">

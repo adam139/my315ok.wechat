@@ -140,6 +140,11 @@ class ISendWechatEvent(zope.interface.Interface):
     """
     a send wechat event mark interface.
     """  
+
+class ISendSelfWechatEvent(zope.interface.Interface):
+    """
+    a send wechat event mark interface.
+    """  
     
 class ISendAllWechatEvent(zope.interface.Interface):
     """

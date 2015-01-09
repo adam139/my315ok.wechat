@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#from zope.component import getMultiAdapter
+from zope.component import getMultiAdapter
 from cStringIO import StringIO
 from PIL import Image
 

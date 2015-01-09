@@ -7,10 +7,11 @@ from Products.CMFCore.utils import getToolByName
 from zope.component import getMultiAdapter
 
 from zope import event
+import zope.interface
 
 from Products.ATContentTypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import ISendWechatEvent
-from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent
+from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent,SendSelfWechatEvent
 from my315ok.wechat.content.menufolder import IMenufolder
 from dexterity.membrane.content.member import IMember
 from my315ok.wechat.interfaces import Iweixinapi,IMemberWeiXinApi
@@ -21,23 +22,27 @@ class AjaxSend(grok.View):
     may select two ways:
     1 send by system public account;
     2 send by all member's public account;
+    3  send by myself public account;
     """
     
-    grok.context(IMember)
+    grok.context(zope.interface.Interface)
     grok.name('ajax_send_weixin')
     grok.require('zope2.View')
         
     def render(self):
         data = self.request.form
-        id = data['id']
-        title = data['title']        
-        catalog = getToolByName(self.context, 'portal_catalog')
-        brains = catalog({'Title': title,'id': id})
+#        id = data['id']
+#        title = data['title']        
+#        catalog = getToolByName(self.context, 'portal_catalog')
+#        brains = catalog({'Title': title,'id': id})
+        obj = self.context
         type = data['type']
         if type == "system":
-            event.notify(SendWechatEvent(brains[0].getObject()))
+            event.notify(SendWechatEvent(obj))
+        elif type == "members":
+            event.notify(SendAllWechatEvent(obj))
         else:
-            event.notify(SendAllWechatEvent(brains[0].getObject()))
+            event.notify(SendSelfWechatEvent(obj))            
         data = {'info':1}        
         return json.dumps(data)
     
