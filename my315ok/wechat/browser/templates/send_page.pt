@@ -35,10 +35,8 @@
 		<script type="text/javascript">
 		function sendchat(type) {        
      var action = $("#ajaxsend").attr('data-ajax-target');
-     var id = $("#ajaxsend").attr('data-ajax-id');     
-     var title = $("#ajaxsend").attr('data-title');
 
-     var senddata = {"id":id,"title":title,"type":type}	;
+     var senddata = {"type":type};
      $.post(action, 
            senddata,
            function(data) {

@@ -72,6 +72,8 @@ def sendnews(obj, event):
             from zope.interface import alsoProvides
             alsoProvides(obj,ISendCapable)
         api = Iweixinapi(obj)
+#        import pdb
+#        pdb.set_trace()
     # if news item create articles data (IATNewsItem)
         if IATNewsItem.providedBy(obj):
             at = Content(api,obj)

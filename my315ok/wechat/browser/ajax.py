@@ -60,15 +60,7 @@ class AjaxQrcode(grok.View):
     def render(self):
         data = self.request.form
         id = data['id']
-#        import pdb
-#        pdb.set_trace()     
-#        catalog = getToolByName(self.context, 'portal_catalog')
-#        brains = catalog({'id': id,'object_provides':IMember.__identifier__})
-#        obj = brains.getObject()
-#        from my315ok.wechat.interfaces import ISendCapable
-#        if not(ISendCapable.providedBy(self.context)):
-#            from zope.interface import alsoProvides
-#            alsoProvides(self.context,ISendCapable)
+
         api = IMemberWeiXinApi(self.context)
         data = {"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 123}}}
         qr = api.create_qrcode(data)
