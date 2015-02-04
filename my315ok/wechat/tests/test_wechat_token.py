@@ -8,8 +8,7 @@ class TestBasic(unittest.TestCase):
     def _makeTwo(self):
         from dexterity.membrane.content.member import member
         dummy = member()
-        import pdb
-        pdb.set_trace()
+
         from my315ok.wechat.behaviors.wechat_token import WechatApiKey
         return WechatApiKey(dummy)        
     

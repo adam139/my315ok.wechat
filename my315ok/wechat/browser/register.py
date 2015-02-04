@@ -1,6 +1,6 @@
 #-*- coding: UTF-8 -*-
 from five import grok
-from dexterity.membrane.content.member import IMember
+from dexterity.membrane.content.member import IWechatMember
 from dexterity.membrane.content.memberfolder import IMemberfolder
 from plone.formwidget.captcha import CaptchaFieldWidget
 from plone.formwidget.captcha.validator import CaptchaValidator
@@ -44,7 +44,7 @@ defaultvalue2 = u"""
         </li>        
 </ol></p>
 """
-class IRegistrationForm(IMember):
+class IRegistrationForm(IWechatMember):
 
     privacy = RichText(
             title=_(u"privacy"),
@@ -59,13 +59,9 @@ class IRegistrationForm(IMember):
     captcha = schema.TextLine(title=u"",
                             required=True)
 
-    form.omitted('color','description','homepage','research_domain',
-                 'country','address','qq_number','photo','need_sponsorship',
-                 'roomshare','is_vegetarian','comment','tshirt_size','bonus')
+    form.omitted('description','homepage')
 
-    form.no_omit(IEditForm, 'color','description','homepage','research_domain',
-                 'country','address','qq_number','photo','need_sponsorship',
-                 'roomshare','is_vegetarian','comment','tshirt_size','bonus')
+    form.no_omit(IEditForm, 'description','homepage')
   
 
 @form.validator(field=IRegistrationForm['captcha'])
@@ -80,7 +76,8 @@ def validateCaptca(value):
     captcha.validate(value)
 
 grok.templatedir('register_templates')
-from wechat.policy.browser.interfaces import IThemeSpecific  
+from wechat.policy.browser.interfaces import IThemeSpecific
+  
 class RegistrationForm(form.SchemaForm):
     grok.name('register')
     grok.context(IMemberfolder)
