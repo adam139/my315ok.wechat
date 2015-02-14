@@ -95,7 +95,7 @@ def sendnews(obj, event):
             except:
                 raise Exception("some error")
             for toid in followers:
-                self.api.send_text_message(toid,text)                
+                api.send_text_message(toid,text)                
                 
     # if is dexterity content object
         elif Iproduct.providedBy(obj):
