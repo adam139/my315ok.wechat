@@ -4,14 +4,17 @@
     
   <records prefix="my315ok.wechat.interfaces.IwechatSettings" interface="my315ok.wechat.interfaces.IwechatSettings">
   <record interface="my315ok.wechat.interfaces.IwechatSettings.appid">
-    <value>220</value>
+    <value>wx77d2f3625808f911</value>
 	</record>
   <record interface="my315ok.wechat.interfaces.IwechatSettings.appsecret">
-    <value>220</value>
+    <value>b66e860a24452f782dc40d3daab6a79a</value>
 	</record>
   <record interface="my315ok.wechat.interfaces.IwechatSettings.token">
     <value>plone2018</value>
-	</record>		
+	</record>
+  <record interface="my315ok.wechat.interfaces.IwechatSettings.preview">
+    <value>http://images.315ok.org/xtshzz/images/qrcode.jpg</value>
+	</record>			
 </records>
 
 </registry>

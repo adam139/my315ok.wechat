@@ -45,7 +45,7 @@
       />
   <genericsetup:registerProfile
       name="uninstall"
-      title="my315ok.wechat"
+      title="uninstall my315ok.wechat"
       directory="profiles/uninstall"
       description="Uninstalls my315ok.wechat package"
       provides="Products.GenericSetup.interfaces.EXTENSION"

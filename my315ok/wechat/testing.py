@@ -39,7 +39,8 @@ class SitePolicy(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'my315ok.products:default')        
         applyProfile(portal, 'my315ok.wechat:default')
-        applyProfile(portal, 'dexterity.membrane:default')        
+        applyProfile(portal, 'dexterity.membrane:default') 
+        applyProfile(portal, 'dexterity.membrane.content:example')                
 
 FIXTURE = SitePolicy()
 INTEGRATION_TESTING = IntegrationTesting(bases=(FIXTURE,), name="Site:Integration")

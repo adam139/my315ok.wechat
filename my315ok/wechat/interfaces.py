@@ -134,7 +134,11 @@ class IwechatSettings(zope.interface.Interface):
     token = schema.ASCII(
                              title=_(u"app token"),
                              description=_(u"weixin app token"),
-                             )    
+                             )
+    preview = schema.ASCIILine(
+            title=_(u"Preview image URL"),
+            required=False,
+        )        
     
 class ISendWechatEvent(zope.interface.Interface):
     """

@@ -3,8 +3,21 @@ from zope.component import getMultiAdapter
 from cStringIO import StringIO
 from PIL import Image
 
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
+from my315ok.wechat.interfaces import IwechatSettings
+
 from my315ok.wechat.weixinapi import check_error
-from my315ok.wechat.tests.test_api import putFile,getFile
+from my315ok.wechat.tests.test_api import getFile
+def putFile(filename):
+    """ using ram disk cache temp file """
+    import os
+#    COMPILE_MO_FILES = os.environ.get('ramcache', '')
+    filename = os.path.join('/ramdisk/', filename)
+    return filename
+
+
+
 # 适应于 plone news item content object
 class Content(object):
     def __init__(self, api,obj):
@@ -35,7 +48,21 @@ class Content(object):
             filename = open(imgfile,'r')
     
         except:  # if can't get image data,then use a  default image
-            filename = getFile("avatar_default.jpg")
+            registry = getUtility(IRegistry)
+            settings = registry.forInterface(IwechatSettings)
+            import urllib2
+            if settings.preview == None:
+                filename = getFile("avatar_default.jpg")
+            else:
+                url = settings.preview
+                imgstr = urllib2.urlopen(url).read()
+                imgobj = Image.open(StringIO(imgstr))
+                suffix = (imgobj.format).lower()
+                filename = "news.%s" % suffix
+                imgfile = putFile(filename)
+                imgobj.save(imgfile)
+                del imgobj
+                filename = open(imgfile,'r')                
 
         try:
             rt = api.upload_media('image',filename)
