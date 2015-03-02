@@ -3,8 +3,11 @@ from datetime import datetime
 from random import randint
 
 from Products.Five.browser import BrowserView
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 
+from plone.memoize.instance import memoize
 
 
 
@@ -22,7 +25,16 @@ class BaseView(BrowserView):
         # The list of errors found when checking the form.
         self.errors = []
 
+    @memoize    
+    def pm(self):
+        context = aq_inner(self.context)
+        pm = getToolByName(context, "portal_membership")
+        return pm
 
+    @property
+    def isEditable(self):
+        from Products.CMFCore.permissions import ModifyPortalContent
+        return self.pm().checkPermission(ModifyPortalContent,self.context)
 
     def get_lang(self):
         """ Finds the language to use.

@@ -75,7 +75,7 @@ def sendnews(obj, event):
 #        import pdb
 #        pdb.set_trace()
     # if news item create articles data (IATNewsItem)
-        if IATNewsItem.providedBy(obj):
+        if IATNewsItem.providedBy(obj) or IATDocument.providedBy(obj):
             at = Content(api,obj)
             data = {}
             try:
@@ -246,7 +246,7 @@ def pushSelfWeixin(obj, event):
 
     member = bn.getObject()  
         
-    if IATNewsItem.providedBy(obj):
+    if IATNewsItem.providedBy(obj) or IATDocument.providedBy(obj):
             api = queryMultiAdapter((obj, member), IweixinapiMember)
             if api == None: return
             atnews = Content(api,obj)

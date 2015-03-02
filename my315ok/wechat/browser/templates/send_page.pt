@@ -25,7 +25,7 @@
       		data-ajax-id context/id;data-title context/title"></div>
       </div>
 		<div id="send" class="row">
-			<div class="col-sm-4 col-md-2"><button  class="btn btn-primary system" type="button" data-type="system">系统账号发送微信</button></div>
+			<div class="col-sm-4 col-md-2"><button tal:condition="python:view.isEditable" class="btn btn-primary system" type="button" data-type="system">系统账号发送微信</button></div>
 			<div class="col-sm-4 col-md-2"><button  class="btn btn-primary members" type="button" data-type="members">所有成员发送微信</button></div>
 			<div class="col-sm-4 col-md-2"><button  class="btn btn-primary self" type="button" data-type="self">我的公众号发送微信</button></div>
 
