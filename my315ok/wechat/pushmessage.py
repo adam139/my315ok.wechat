@@ -9,6 +9,7 @@ from my315ok.wechat.interfaces import IwechatSettings
 
 from my315ok.wechat.weixinapi import check_error
 from my315ok.wechat.tests.test_api import getFile
+
 def putFile(filename):
     """ using ram disk cache temp file """
     import os
@@ -120,6 +121,7 @@ class DexterityItem(Content):
 
 #适应于dexterity container 
 class DexterityContainer(DexterityItem):
+    """ publish productfolder text and image message"""
     
     def upload_news(self):
             """上传图文消息""" 
