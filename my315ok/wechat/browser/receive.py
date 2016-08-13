@@ -7,8 +7,10 @@ from Products.CMFCore.utils import getToolByName
 from zope.component import getMultiAdapter
 
 from zope import event
-from Products.ATContentTypes.content.newsitem import ATNewsItem
-from Products.ATContentTypes.interfaces import IATNewsItem
+try:
+    from Products.ATContentTypes.interfaces import IATNewsItem
+except:
+    from plone.app.contenttypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import ISendWechatEvent
 from my315ok.wechat.events import SendWechatEvent
 from my315ok.wechat.content.menufolder import IMenufolder

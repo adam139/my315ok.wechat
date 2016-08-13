@@ -4,7 +4,15 @@ from zope import event
 import zope.interface
 from zope.component import queryMultiAdapter
 from Products.CMFCore.utils import getToolByName
-from Products.ATContentTypes.interfaces import IATNewsItem,IATDocument
+try:
+    from Products.ATContentTypes.interfaces import IATNewsItem
+except:
+    from plone.app.contenttypes.interfaces import IATNewsItem
+try:
+    from Products.ATContentTypes.interfaces import IATDocument
+except:
+    from plone.app.contenttypes.interfaces import IDocument as IATDocument    
+
 from plone.dexterity.interfaces import IDexterityContent
 
 from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember

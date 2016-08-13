@@ -1,4 +1,4 @@
-import unittest2 as unittest
+import unittest
 from zope import event
 from my315ok.wechat.testing import INTEGRATION_TESTING
 from my315ok.wechat.testing import FUNCTIONAL_TESTING

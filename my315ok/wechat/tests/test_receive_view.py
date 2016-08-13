@@ -13,7 +13,7 @@ from my315ok.wechat.utilities import to_binary, to_text
 from plone.app.testing import TEST_USER_ID, login, TEST_USER_NAME, \
     TEST_USER_PASSWORD, setRoles
 from plone.testing.z2 import Browser
-import unittest2 as unittest
+import unittest
 
 from plone.namedfile.file import NamedImage
 import os

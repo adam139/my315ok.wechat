@@ -2,13 +2,18 @@
 from zope.component import getMultiAdapter
 from cStringIO import StringIO
 from PIL import Image
+import os
 
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 from my315ok.wechat.interfaces import IwechatSettings
 
 from my315ok.wechat.weixinapi import check_error
-from my315ok.wechat.tests.test_api import getFile
+# from my315ok.wechat.tests.test_api import getFile
+def getFile(filename):
+    """ return contents of the file with the given name """
+    filename = os.path.join(os.path.dirname(__file__), filename)
+    return open(filename, 'r')
 
 def putFile(filename):
     """ using ram disk cache temp file """

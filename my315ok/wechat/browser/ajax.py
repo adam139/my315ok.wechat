@@ -9,7 +9,10 @@ from zope.component import getMultiAdapter
 from zope import event
 import zope.interface
 
-from Products.ATContentTypes.interfaces import IATNewsItem
+try:
+    from Products.ATContentTypes.interfaces import IATNewsItem
+except:
+    from plone.app.contenttypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import ISendWechatEvent
 from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent,SendSelfWechatEvent
 from my315ok.wechat.content.menufolder import IMenufolder

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import unittest2 as unittest
+import unittest
 #from eisoo.mpsource.interfaces import IUserLocator
 from my315ok.wechat.testing import INTEGRATION_TESTING
 from plone.app.testing import TEST_USER_ID, setRoles
