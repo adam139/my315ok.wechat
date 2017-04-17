@@ -34,7 +34,7 @@ setup(name='my315ok.wechat',
           'five.grok',
           'requests',
           'six',
-          'PIL',          
+#           'PIL',          
           # -*- Extra requirements: -*-
       ],
       extras_require={
