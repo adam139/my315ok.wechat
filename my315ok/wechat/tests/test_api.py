@@ -5,11 +5,12 @@ from my315ok.wechat.testing import INTEGRATION_TESTING
 from plone.app.testing import TEST_USER_ID, setRoles
 
 from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
-from my315ok.wechat.weixinapi import check_error
+from my315ok.wechat.localapi import check_error
 from my315ok.wechat.events import SendWechatEvent,SendAllWechatEvent,SendSelfWechatEvent
 from Products.ATContentTypes.interfaces import IATNewsItem
 from Products.ATContentTypes.content.newsitem import ATNewsItem
 from plone.namedfile.file import NamedImage
+# from plone.namedfile import field as namedfile
 from zope import event
 import os
 import json
@@ -27,12 +28,25 @@ def putFile(filename):
     filename = os.path.join(os.path.dirname(__file__), filename)
     return filename
 #    return open(filename, 'r+')
+def dummy_image():
+    from plone.namedfile.file import NamedBlobImage
+    filename = os.path.join(os.path.dirname(__file__), u'image.jpg')
+    return NamedBlobImage(
+        data=open(filename, 'r').read(),
+        filename=filename
+    )
+    
 class setupbase(unittest.TestCase):
     layer = INTEGRATION_TESTING
     
     def setUp(self):
         portal = self.layer['portal']
         setRoles(portal, TEST_USER_ID, ('Manager',))
+        
+        portal.invokeFactory('Folder', 'container1',
+                             title="container1",description="container1")
+        portal.invokeFactory('Folder', 'container2',
+                             title="container2",description="container2")             
         
         portal.invokeFactory('my315ok.products.productfolder', 'productfolder1',
                              PerPagePrdtNum=2,title="productfolder1",description="demo productfolder")     
@@ -52,21 +66,27 @@ class setupbase(unittest.TestCase):
         item2.text = "<p>test send dexterity object</p>"
         item2.reindexObject(idxs=["text"])            
 
-        portal.invokeFactory('News Item','news1',
+        portal['container1'].invokeFactory('News Item','news1',
                                          title=u"news1",
                                          description=u"a news",
-                                         text='news',
-
+                                         text='<strong>news1</strong><span style="color:red">this is test</span>',
                                          )
-        portal.invokeFactory('Document','page1',
+        portal['container1'].invokeFactory('News Item','news2',
+                                         title=u"news2",
+                                         description=u"a news 2",
+                                         text='news2',
+                                         )        
+        portal['container1'].invokeFactory('Document','page1',
                                          title=u"page1",
                                          description=u"a document",
                                          text='<p>document</p>',
 
                                          )        
         data = getFile('image.jpg').read()
-        item = portal['news1']
-        item.setImage(data, content_type="image/jpg")
+        item = portal['container1']['news1']
+        item.image = dummy_image() 
+        item.image_caption = "news image"
+#         item.setImage(data, content_type="image/jpg")
 # create member object        
         portal.invokeFactory('dexterity.membrane.memberfolder', 'memberfolder')
         
@@ -92,7 +112,7 @@ class setupbase(unittest.TestCase):
 
         self.portal = portal
         from my315ok.wechat.interfaces import ISendCapable
-        obj = portal['news1']
+        obj = portal['container1']['news1']
 #        import pdb
 #        pdb.set_trace()
         if not(ISendCapable.providedBy(obj)):
@@ -106,12 +126,12 @@ class Allcontents(setupbase):
 
     
     def test_config(self):
-        item = self.portal['news1']
-        appid = "appid"
+        item = self.portal['container1']['news1']
+        appid = "wx77d2f3625808f911"
         self.assertEqual(Iweixinapi(item).appid,appid)
         
     def test_token(self):
-        item = self.portal['news1']
+        item = self.portal['container1']['news1']
         json = Iweixinapi(item).grant_token()
 
         expires = json["expires_in"]
@@ -119,7 +139,40 @@ class Allcontents(setupbase):
         
     def test_createmenu(self):
         #create a menu
-
+        menu_data = {
+                "button":[
+                    {
+                        "type":"click",
+                        "name":"今日歌曲",
+                        "key":"V1001_TODAY_MUSIC"
+                    },
+                    {
+                        "type":"click",
+                        "name":"歌手简介",
+                        "key":"V1001_TODAY_SINGER"
+                    },
+                    {
+                        "name":"菜单",
+                        "sub_button":[
+                            {
+                                "type":"view",
+                                "name":"搜索",
+                                "url":"http://www.soso.com/"
+                            },
+                            {
+                                "type":"view",
+                                "name":"视频",
+                                "url":"http://v.qq.com/"
+                            },
+                            {
+                                "type":"click",
+                                "name":"赞一下我们",
+                                "key":"V1001_GOOD"
+                            }
+                        ]
+                    }
+                ]}
+        
         rjson = self.api.create_menu(menu_data)
         code = rjson['errcode']
         self.assertEqual(code,0)
@@ -162,7 +215,8 @@ class Allcontents(setupbase):
                 ]}
 
         fst = getjson['menu']['button'][1]['name']
-        orig = menu_data['button'][1]['name'].decode()        
+
+        orig = menu_data['button'][1]['name'].decode('utf-8')        
 #        djson = json.dumps(menu_data).decode("utf-8")
         self.assertEqual(fst,orig)
         
@@ -178,14 +232,18 @@ class Allcontents(setupbase):
         
         
     def test_sendtext(self):
-        "send text message" 
-        item = self.portal['news1']
-        text = item.getText()
+        "send news text message" 
+        item = self.portal['container1']['news1']
+        try:
+            text = item.text.output
+        except:
+            text = item.text
         try:
             followers = self.api.get_followers()['data']['openid']
-        except:
-            raise ("some error")
 
+        except:
+            raise ("can't get followers.")
+            return
         for toid in followers:
             self.api.send_text_message(toid,text)
         
@@ -196,28 +254,25 @@ class Allcontents(setupbase):
 
 
 #测试按openid群发图dexterity content object: product   
-    def test_sendnews_article(self):
-        item = self.portal['productfolder1']
+    def test_news_send(self):
+        item = self.portal['container1']['news1']
         event.notify(SendWechatEvent(item))
-
-#测试按openid群发图dexterity content object: product   
-    def test_sendnews_prod(self):
+    def test_prod_send(self):
         item = self.portal['productfolder1']['product2']
+        event.notify(SendWechatEvent(item))    
+    def test_articles_send(self):
+        item = self.portal['container1']
+        event.notify(SendWechatEvent(item))
+#测试按openid群发图dexterity content object: product   
+    def test_productfolder_send(self):
+        item = self.portal['productfolder1']
         event.notify(SendWechatEvent(item))
 #测试按openid群发图dexterity content object: product   
     def test_allsendnews_prod(self):
         item = self.portal['productfolder1']['product2']
         event.notify(SendAllWechatEvent(item))        
 
-#测试按openid群发page   
-    def test_sendnews_page(self):
-        item = self.portal['page1']
-        event.notify(SendWechatEvent(item))
 
-#测试按openid群发图文消息    
-    def test_sendnews_item(self):
-        item = self.portal['news1']
-        event.notify(SendWechatEvent(item))
 
        # 二维码测试
     def test_qrcode(self):
@@ -264,9 +319,6 @@ class Allcontents(setupbase):
 # Look up and invoke the view via traversal
         view = self.portal['memberfolder']['member1'].restrictedTraverse('@@ajaxuploadqrcode')
         result = view()
-        import pdb
-        pdb.set_trace()
-
         self.assertEqual(json.loads(result)['info'],1)        
                 
       

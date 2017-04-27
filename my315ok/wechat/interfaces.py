@@ -64,8 +64,7 @@ class ILinkMessage(IMessage):
 class IAnalyzeMessage(zope.interface.Interface):
     """
     分析从微信服务器过来的xml报文,根据报文类型MsgType，实例化该报文
-    """ 
-    
+    """    
     def xml_to_dic(xml):
         """
         xml为来自微信服务器原始报文，解析该xml文档，返回一个字典结构，
@@ -96,7 +95,7 @@ class ICheckSignature(zope.interface.Interface):
             """   
 class Iweixinapi(zope.interface.Interface):
     """
-    api marker interface
+    api marker interface for any content object
     """    
 
 class IweixinapiMember(zope.interface.Interface):
@@ -110,7 +109,7 @@ class IMemberWeiXinApi(zope.interface.Interface):
 
 class ISendAllCapable(zope.interface.Interface):
     """
-    marker interface for context so the context can be sent as weixin through all public account. 
+    marker interface for context so the context can be sent as weixin through all members's public account. 
     """   
     
 class ISendCapable(zope.interface.Interface):
@@ -120,9 +119,8 @@ class ISendCapable(zope.interface.Interface):
 
 
 class IwechatSettings(zope.interface.Interface):
-    """Describes registry records
-    """
-    
+    """wechat platform registry control panel
+    """    
     appid = schema.ASCII(
             title=_(u"app id"),
             description=_(u"weixin app id"),
@@ -135,6 +133,10 @@ class IwechatSettings(zope.interface.Interface):
                              title=_(u"app token"),
                              description=_(u"weixin app token"),
                              )
+    encoding_aes_key = schema.ASCII(
+                             title=_(u"encoding aes key"),
+                             description=_(u"weixin encoding aes key"),
+                             )                             
     preview = schema.ASCIILine(
             title=_(u"Preview image URL"),
             required=False,
@@ -142,21 +144,21 @@ class IwechatSettings(zope.interface.Interface):
     
 class ISendWechatEvent(zope.interface.Interface):
     """
-    a send wechat event mark interface.
+    a send wechat event mark interface for send out wechat from system wechat account.
     """  
 
 class ISendSelfWechatEvent(zope.interface.Interface):
     """
-    a send wechat event mark interface.
+    a send wechat event mark interface.send out wechat from current login member's wechat account.
     """  
     
 class ISendAllWechatEvent(zope.interface.Interface):
     """
-    a send wechat event mark interface by multiple public account.
+    a send wechat event mark interface .Send out wechat from all members's wechat account.
     """  
         
 class IReceiveWechatEvent(zope.interface.Interface):
     """
-    a receive wechat event mark interface.
+    a receive wechat event mark interface.While a wechat message arrive in wechat platform,fire the event.
     """        
                      

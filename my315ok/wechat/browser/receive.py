@@ -15,7 +15,7 @@ from my315ok.wechat.interfaces import ISendWechatEvent
 from my315ok.wechat.events import SendWechatEvent
 from my315ok.wechat.content.menufolder import IMenufolder
 from my315ok.wechat.interfaces import Iweixinapi
-from my315ok.wechat.weixinapi import check_error
+from my315ok.wechat.localapi import check_error
 
 from Products.statusmessages.interfaces import IStatusMessage
 

@@ -12,17 +12,19 @@
     <!-- Grok the package to initialise schema interfaces and content classes -->
     <grok:grok package="." />
     
-		<adapter
-    factory="my315ok.wechat.weixinapi.Client"
+	<adapter
+    factory="my315ok.wechat.weixinapi.BaseApi"
     provides=".interfaces.Iweixinapi"
     for=".interfaces.ISendCapable"     
    		 />
-		<adapter
+   		 
+	<adapter
     factory="my315ok.wechat.weixinapi.MemberWeiXinApi"
     provides=".interfaces.IMemberWeiXinApi"
     for="dexterity.membrane.content.member.IMember"     
-   		 />      		  
-		<adapter
+   		 />
+   		       		  
+	<adapter
     factory="my315ok.wechat.weixinapi.WeiXinApi"
     provides=".interfaces.IweixinapiMember"
     for=".interfaces.ISendAllCapable

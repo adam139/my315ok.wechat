@@ -14,6 +14,10 @@ class SitePolicy(PloneSandboxLayer):
     
     def setUpZope(self, app, configurationContext):
         # Load ZCML
+        import plone.app.contenttypes
+        self.loadZCML(package=plone.app.contenttypes)
+        import plone.app.event.dx
+        self.loadZCML(package=plone.app.event.dx)        
         import my315ok.products
         xmlconfig.file('configure.zcml', my315ok.products, context=configurationContext)
         import dexterity.membrane
@@ -37,11 +41,15 @@ class SitePolicy(PloneSandboxLayer):
         z2.uninstallProduct(app, 'Products.membrane')        
         
     def setUpPloneSite(self, portal):
+        applyProfile(portal, 'plone.app.contenttypes:default')
         applyProfile(portal, 'my315ok.products:default')        
         applyProfile(portal, 'my315ok.wechat:default')
         applyProfile(portal, 'dexterity.membrane:default') 
-        applyProfile(portal, 'dexterity.membrane.content:example')                
-
+        applyProfile(portal, 'dexterity.membrane.content:example')
+                        
+    def tearDownPloneSite(self, portal):
+        applyProfile(portal, 'plone.app.contenttypes:uninstall')
+        
 FIXTURE = SitePolicy()
 INTEGRATION_TESTING = IntegrationTesting(bases=(FIXTURE,), name="Site:Integration")
 FUNCTIONAL_TESTING = FunctionalTesting(bases=(FIXTURE,), name="Site:Functional")

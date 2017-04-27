@@ -18,7 +18,7 @@ from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent,SendSelfWe
 from my315ok.wechat.content.menufolder import IMenufolder
 from dexterity.membrane.content.member import IMember
 from my315ok.wechat.interfaces import Iweixinapi,IMemberWeiXinApi
-from my315ok.wechat.weixinapi import check_error
+from my315ok.wechat.localapi import check_error
 
 class AjaxSend(grok.View):
     """AJAX action: send current context to weixin.

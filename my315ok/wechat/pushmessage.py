@@ -3,16 +3,14 @@ from zope.component import getMultiAdapter
 from cStringIO import StringIO
 from PIL import Image
 import os
-
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 from my315ok.wechat.interfaces import IwechatSettings
-
-from my315ok.wechat.weixinapi import check_error
+from my315ok.wechat.localapi import check_error
 # from my315ok.wechat.tests.test_api import getFile
 def getFile(filename):
     """ return contents of the file with the given name """
-    filename = os.path.join(os.path.dirname(__file__), filename)
+    filename = os.path.join(os.path.dirname(__file__) + "/tests", filename)
     return open(filename, 'r')
 
 def putFile(filename):
@@ -23,8 +21,7 @@ def putFile(filename):
     return filename
 
 
-
-# 适应于 plone news item content object
+# 适应于 plone ATContenttype content object,using zcml configure multi-adapters
 class Content(object):
     def __init__(self, api,obj):
         self.api = api
@@ -42,7 +39,6 @@ class Content(object):
             api is weixin api,
         return mediaid
         """
-
         try:
             imgobj = self.image_data(obj)
             imgobj = Image.open(imgobj)
@@ -51,8 +47,7 @@ class Content(object):
             imgfile = putFile(filename)
             imgobj.save(imgfile)
             del imgobj
-            filename = open(imgfile,'r')
-    
+            filename = open(imgfile,'r')    
         except:  # if can't get image data,then use a  default image
             registry = getUtility(IRegistry)
             settings = registry.forInterface(IwechatSettings)
@@ -68,8 +63,7 @@ class Content(object):
                 imgfile = putFile(filename)
                 imgobj.save(imgfile)
                 del imgobj
-                filename = open(imgfile,'r')                
-
+                filename = open(imgfile,'r')               
         try:
             rt = api.upload_media('image',filename)
             filename.close()
@@ -87,12 +81,12 @@ class Content(object):
             """上传图文消息""" 
             obj = self.obj
             api = self.api
-            text = self.text(obj)
-
+            text = self.text(obj)            
             mid = self.upload_image(api,obj)            
             news_parameters ={}    # declare a news item parameters
             news_parameters["thumb_media_id"] = mid
-            news_parameters["author"] = "admin"
+
+            news_parameters["author"] = obj.getOwner().getUserName()
             news_parameters["title"] = obj.title
             news_parameters["content_source_url"] = obj.absolute_url()
             news_parameters["content"] = text
@@ -102,16 +96,15 @@ class Content(object):
             ars.append(news_parameters)
             data = {}
             data["articles"] = ars
-            del ars   #free ram storage   
-        
+            del ars   #free ram storage         
             newsid = api.upload_news(data)
             newsdic = {}
             newsdic["media_id"] = newsid
             return newsdic 
 
+
 #适应于dexterity item 
-class DexterityItem(Content):
-    
+class DexterityItem(Content):    
     def text(self,obj): #may be richtext field
         try:
             text = obj.text.output
@@ -123,10 +116,44 @@ class DexterityItem(Content):
         imgobj = StringIO(obj.image.data)
         return imgobj
 
-
 #适应于dexterity container 
 class DexterityContainer(DexterityItem):
-    """ publish productfolder text and image message"""
+    """ send productfolder text and image message as wechat article to flowers."""
+    
+    def upload_news(self):
+            """上传图文消息""" 
+            obj = self.obj
+            api = self.api
+            request = getattr(obj, "REQUEST", None)
+            #call product folder view
+            folderview = getMultiAdapter((obj, request),name=u"contentlisting")
+            subitems = folderview(batch=True, b_size=3, b_start=0)
+            ars = [] # article array, member item is a news item 
+            k = 0           
+            for brain in subitems:
+                k = k+1
+                # just fetch three items 
+                if k > 3:break    # max is 10 newsitems
+                mid = self.upload_image(api,brain.getObject())            
+                news_parameters ={}    # declare a news item parameters
+                news_parameters["thumb_media_id"] = mid
+                news_parameters["author"] = brain.Creator()
+                news_parameters["title"] = brain.Title()
+                news_parameters["content_source_url"] = brain.getPath()
+                news_parameters["content"] = self.text(brain.getObject())
+                news_parameters["digest"] = brain.Description()
+                news_parameters["show_cover_pic"] = "1"
+                ars.append(news_parameters)
+            data = {}
+            data["articles"] = ars
+            del ars   #free ram storage          
+            newsid = api.upload_news(data)
+            newsdic = {}
+            newsdic["media_id"] = newsid
+            return newsdic
+#适应于my315ok.product 的 prdt folder container 
+class PrdtFolderContainer(DexterityItem):
+    """ send productfolder text and image message as wechat article to flowers."""
     
     def upload_news(self):
             """上传图文消息""" 
@@ -140,8 +167,8 @@ class DexterityContainer(DexterityItem):
             k = 0           
             for brain in subitems:
                 k = k+1
+                # just fetch three items 
                 if k > 3:break    # max is 10 newsitems
-
                 mid = self.upload_image(api,brain.getObject())            
                 news_parameters ={}    # declare a news item parameters
                 news_parameters["thumb_media_id"] = mid
@@ -154,8 +181,7 @@ class DexterityContainer(DexterityItem):
                 ars.append(news_parameters)
             data = {}
             data["articles"] = ars
-            del ars   #free ram storage   
-        
+            del ars   #free ram storage          
             newsid = api.upload_news(data)
             newsdic = {}
             newsdic["media_id"] = newsid
