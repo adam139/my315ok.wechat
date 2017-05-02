@@ -1,18 +1,11 @@
 #-*- coding: UTF-8 -*-
+from zope import event
+import zope.interface
+from zope.component import getMultiAdapter
 from five import grok
 import json
 from Acquisition import aq_inner
-
 from Products.CMFCore.utils import getToolByName
-from zope.component import getMultiAdapter
-
-from zope import event
-import zope.interface
-
-try:
-    from Products.ATContentTypes.interfaces import IATNewsItem
-except:
-    from plone.app.contenttypes.interfaces import IATNewsItem
 from my315ok.wechat.interfaces import ISendWechatEvent
 from my315ok.wechat.events import SendWechatEvent, SendAllWechatEvent,SendSelfWechatEvent
 from my315ok.wechat.content.menufolder import IMenufolder
@@ -22,7 +15,7 @@ from my315ok.wechat.localapi import check_error
 
 class AjaxSend(grok.View):
     """AJAX action: send current context to weixin.
-    may select two ways:
+    may select three ways:
     1 send by system public account;
     2 send by all member's public account;
     3  send by myself public account;
@@ -34,10 +27,6 @@ class AjaxSend(grok.View):
         
     def render(self):
         data = self.request.form
-#        id = data['id']
-#        title = data['title']        
-#        catalog = getToolByName(self.context, 'portal_catalog')
-#        brains = catalog({'Title': title,'id': id})
         obj = self.context
         type = data['type']
         if type == "system":
@@ -51,9 +40,10 @@ class AjaxSend(grok.View):
     
 class AjaxQrcode(grok.View):
     """AJAX action: send current context to weixin.
-    may select two ways:
+    may select three ways:
     1 send by system public account;
     2 send by all member's public account;
+    3  send by current member's wechat public account;
     """
     
     grok.context(IMember)
@@ -63,27 +53,21 @@ class AjaxQrcode(grok.View):
     def render(self):
         data = self.request.form
         id = data['id']
-
         api = IMemberWeiXinApi(self.context)
         data = {"action_name": "QR_LIMIT_SCENE", "action_info": {"scene": {"scene_id": 123}}}
         qr = api.create_qrcode(data)
         try:
             ticket=check_error(qr)['ticket']
-#            import pdb
-#            pdb.set_trace()
             rt = api.show_qrcode(ticket)
             # image data
             dt = rt.content
             from plone import namedfile
             self.context.image = namedfile.NamedBlobImage(dt,filename=u"qrcode.jpg")
-#            self.context.data = rt.content
             data = {'info':1}        
             return json.dumps(data)
 
         except:
             raise Exception("show qrcode error")                
-
-
 
 
 class AjaxCreateMenu(grok.View):
@@ -133,8 +117,7 @@ class AjaxCreateMenu(grok.View):
                             }
                         ]
                     }
-                ]}
-            
+                ]}            
         else:
             menu_data = {"button":[]}
             
@@ -150,15 +133,13 @@ class AjaxCreateMenu(grok.View):
                     subitem['type'] = obj.menu_type
                     subitem['key'] = obj.key
                     subitem['url'] = obj.url
-                    topitem['sub_button'].append(subitem)
-                    
+                    topitem['sub_button'].append(subitem)                    
             else:
                 obj = bn.getObject()
                 topitem['name'] = bn.Title
                 topitem['type'] = obj.menu_type
                 topitem['key'] = obj.key
-                topitem['url'] = obj.url
-                
+                topitem['url'] = obj.url                
             menu_data['button'].append(topitem)
 # fetech member object            
         context = aq_inner(self.context)
@@ -166,14 +147,12 @@ class AjaxCreateMenu(grok.View):
         pc = getToolByName(context, "portal_catalog")
         member = pm.getAuthenticatedMember()
         member_id = member.getId()
-#        import pdb
-#        pdb.set_trace()
         bn = pc({'object_provides': IMember.__identifier__,'email':member_id})
         
         # first using myself appid
         try:
             api = IMemberWeiXinApi(bn[0].getObject())
-            # second using system appid
+         # second using system appid
         except:
             from my315ok.wechat.interfaces import ISendCapable
             if not(ISendCapable.providedBy(self.context)):
@@ -181,7 +160,6 @@ class AjaxCreateMenu(grok.View):
                 alsoProvides(self.context,ISendCapable)
             api = Iweixinapi(self.context)
         # get a menu item
-
         try:
             mdata = api.get_menu()
           #has old menu
@@ -189,8 +167,7 @@ class AjaxCreateMenu(grok.View):
             if rc['errcode'] == 0:
                 rc = check_error(api.create_menu(menu_data))
         except:   #has not old menu
-            rc = check_error(api.create_menu(menu_data))                
-        
+            rc = check_error(api.create_menu(menu_data))                      
         data = {'info':rc['errcode']}
         return json.dumps(data)    
          

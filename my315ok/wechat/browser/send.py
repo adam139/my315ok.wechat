@@ -1,10 +1,7 @@
+#-*- coding: UTF-8 -*-
 from zope.i18n import translate
-
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ZopeTwoPageTemplateFile
-
-
-
 from my315ok.wechat import MessageFactory as _
 from my315ok.wechat.browser.base import BaseView
 

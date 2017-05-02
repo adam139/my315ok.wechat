@@ -17,7 +17,7 @@ import unittest
 
 from plone.namedfile.file import NamedImage
 import os
-
+from my315ok.wechat.tests.test_api import dummy_image
 def getFile(filename):
     """ return contents of the file with the given name """
     filename = os.path.join(os.path.dirname(__file__), filename)
@@ -41,7 +41,8 @@ class TestProductsFolderView(unittest.TestCase):
                                          )
         data = getFile('image.jpg').read()
         item = portal['news1']
-        item.setImage(data, content_type="image/jpg")
+        item.image = dummy_image() 
+        item.image_caption = "news image" 
         portal.invokeFactory('my315ok.wechat.content.menufolder', 'menufolder1',title="menufolder1")
         
         portal['menufolder1'].invokeFactory('my315ok.wechat.content.menu','menu1',
@@ -65,12 +66,11 @@ class TestProductsFolderView(unittest.TestCase):
                                                menu_type="view",
                                                istopmenu="1",
                                                url="http://315ok.org/",
-                                               key="rich text1")
-        
+                                               key="rich text1")        
         
         self.portal = portal
         
-    def test_ajax_send(self):
+    def test_get_send(self):
         def _make_xml(content):
             return """
             <xml>

@@ -28,7 +28,12 @@ class IWechatApiKey(form.Schema):
     token = schema.TextLine(
         title=_(u'label_token', default=u'Token'),
         required=True
-        )        
+        )
+    encoding_aes_key = schema.TextLine(
+        title=_(u'label_token', default=u'Token'),
+        required=True
+        )
+                
 alsoProvides(IWechatApiKey, form.IFormFieldProvider)
 
 class WechatApiKey(object):
@@ -55,6 +60,15 @@ class WechatApiKey(object):
             raise ValueError('Appsecret must be unicode.')
         self.context.appsecret = value
     appsecret = property(_get_appsecret, _set_appsecret)
+
+    def _get_encoding_aes_key(self):
+        return self.context.appsecret
+
+    def _set_encoding_aes_key(self, value):
+        if isinstance(value, str):
+            raise ValueError('encoding_aes_key must be unicode.')
+        self.context.encoding_aes_key = value
+    encoding_aes_key = property(_get_encoding_aes_key, _set_encoding_aes_key)
 
     def _get_token(self):
         return self.context.token

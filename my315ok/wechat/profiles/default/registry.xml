@@ -12,9 +12,15 @@
   <record interface="my315ok.wechat.interfaces.IwechatSettings.token">
     <value>plone2018</value>
 	</record>
+  <record interface="my315ok.wechat.interfaces.IwechatSettings.encoding_aes_key">
+    <value>plone2018</value>
+	</record>	
   <record interface="my315ok.wechat.interfaces.IwechatSettings.preview">
-    <value>http://images.315ok.org/xtshzz/images/qrcode.jpg</value>
-	</record>			
+    <value>http://images.315ok.org/xtshzz/images/logo.jpg</value>
+	</record>
+  <record interface="my315ok.wechat.interfaces.IwechatSettings.mediaid">
+    <value></value>
+	</record>				
 </records>
 
 </registry>

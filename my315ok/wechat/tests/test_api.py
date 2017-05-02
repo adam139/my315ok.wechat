@@ -7,8 +7,7 @@ from plone.app.testing import TEST_USER_ID, setRoles
 from my315ok.wechat.interfaces import Iweixinapi,IweixinapiMember
 from my315ok.wechat.localapi import check_error
 from my315ok.wechat.events import SendWechatEvent,SendAllWechatEvent,SendSelfWechatEvent
-from Products.ATContentTypes.interfaces import IATNewsItem
-from Products.ATContentTypes.content.newsitem import ATNewsItem
+
 from plone.namedfile.file import NamedImage
 # from plone.namedfile import field as namedfile
 from zope import event
@@ -102,6 +101,7 @@ class setupbase(unittest.TestCase):
                              description="I am member1",
                              appid="wx77d2f3625808f911",
                              appsecret="b66e860a24452f782dc40d3daab6a79a",
+                             encoding_aes_key = "",
                              token="plone2018")     
      
           
@@ -231,6 +231,18 @@ class Allcontents(setupbase):
         self.assertEqual('image',upreturn['type'])
         
         
+    def test_upload_permanent_media(self):
+        imgobj = getFile('image.jpg')
+#         data = {}
+#         data["type"] = "image"
+#         media = {}
+#         media["media"] = "@%s" % os.path.join(os.path.dirname(__file__), 'image.jpg')
+#         data["media"] = media
+        rt = self.api.upload_permanent_media("image",imgobj)
+        import pdb
+        pdb.set_trace()
+        self.assertTrue('' != rt['url'])
+        
     def test_sendtext(self):
         "send news text message" 
         item = self.portal['container1']['news1']
@@ -284,8 +296,7 @@ class Allcontents(setupbase):
         qr = self.api.create_qrcode(data)
         try:
             ticket=check_error(qr)['ticket']
-            import pdb
-            pdb.set_trace()
+
             rt = self.api.show_qrcode(ticket)
             # image data
             virf = StringIO(rt.content)
@@ -293,7 +304,6 @@ class Allcontents(setupbase):
             filename = "qrcode2.jpg" 
             imgfile = putFile(filename)
             imgobj.save(imgfile)
-
         except:
             raise Exception("show qrcode error")
         
@@ -312,9 +322,7 @@ class Allcontents(setupbase):
         auth = hmac.new(secret, TEST_USER_NAME, sha).hexdigest()
         request.form = {
                         '_authenticator': auth,
-                        'id': 'member1',
-
-                                                                       
+                        'id': 'member1',                                                                       
                         }
 # Look up and invoke the view via traversal
         view = self.portal['memberfolder']['member1'].restrictedTraverse('@@ajaxuploadqrcode')

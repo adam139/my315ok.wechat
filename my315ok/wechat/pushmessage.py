@@ -39,6 +39,7 @@ class Content(object):
             api is weixin api,
         return mediaid
         """
+#         update_mid = False
         try:
             imgobj = self.image_data(obj)
             imgobj = Image.open(imgobj)
@@ -48,9 +49,12 @@ class Content(object):
             imgobj.save(imgfile)
             del imgobj
             filename = open(imgfile,'r')    
-        except:  # if can't get image data,then use a  default image
+        except:  # if can't get obj's image data,then use a  default image
             registry = getUtility(IRegistry)
             settings = registry.forInterface(IwechatSettings)
+#             mediaid = settings.mediaid
+#             if bool(mediaid): return mediaid
+#             update_mid = True 
             import urllib2
             if settings.preview == None:
                 filename = getFile("avatar_default.jpg")
@@ -65,11 +69,15 @@ class Content(object):
                 del imgobj
                 filename = open(imgfile,'r')               
         try:
-            rt = api.upload_media('image',filename)
-            filename.close()
+#             if update_mid:
+#                 rt = api.upload_permanent_media("image",filename)
+#                 rt = check_error(rt)
+#                 settings.mediaid = rt["media_id"].encode('utf-8')               
+#             else:
+            rt = api.upload_media('image',filename)                
             rt = check_error(rt)
-            mid = rt["media_id"]
-            return mid
+            filename.close()
+            return rt["media_id"]
         except:
             raise Exception("some error:can't upload image")            
         
@@ -96,8 +104,12 @@ class Content(object):
             ars.append(news_parameters)
             data = {}
             data["articles"] = ars
-            del ars   #free ram storage         
+
+            # 临时图文素材
             newsid = api.upload_news(data)
+            #永久图文素材
+#             newsid = api.add_news(ars)
+            del ars   #free ram storage            
             newsdic = {}
             newsdic["media_id"] = newsid
             return newsdic 
@@ -139,7 +151,7 @@ class DexterityContainer(DexterityItem):
                 news_parameters["thumb_media_id"] = mid
                 news_parameters["author"] = brain.Creator()
                 news_parameters["title"] = brain.Title()
-                news_parameters["content_source_url"] = brain.getPath()
+                news_parameters["content_source_url"] = brain.getURL()
                 news_parameters["content"] = self.text(brain.getObject())
                 news_parameters["digest"] = brain.Description()
                 news_parameters["show_cover_pic"] = "1"

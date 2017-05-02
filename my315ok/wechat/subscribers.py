@@ -82,10 +82,10 @@ def sendnews(obj, event):
             alsoProvides(obj,ISendCapable)
         api = Iweixinapi(obj)
     # if news item create articles data (INewsItem)
+        data = {}
         if INewsItem.providedBy(obj) or Iproduct.providedBy(obj):
             # get context's adapter object
-            at = DexterityItem(api,obj)
-            data = {}
+            at = DexterityItem(api,obj)            
             try:
                 followers = api.get_followers()['data']['openid']
             except:
@@ -96,19 +96,20 @@ def sendnews(obj, event):
             data["msgtype"] = "mpnews"        
             api.mass_send(data)            
         elif  IDocument.providedBy(obj):
-            text = at.text(obj)
+            at = DexterityItem(api,obj)
+#             text = at.text(obj)
             try:
                 followers = api.get_followers()['data']['openid']
             except:
                 raise Exception("some error")
             data["touser"] = followers
-            data["msgtype"] = "text"
-            data["text"] = {"content":text}
+            data["mpnews"] = at.upload_news()           
+            data["msgtype"] = "mpnews"
             api.mass_send(data)                              
     # if is dexterity content object
         elif IFolder.providedBy(obj):
             at = DexterityContainer(api,obj)
-            data = {}
+#             data = {}
             try:
                 followers = api.get_followers()['data']['openid']
             except:
@@ -121,7 +122,7 @@ def sendnews(obj, event):
                         
         elif  Iproductfolder.providedBy(obj):
             atnews = DexterityContainer(api,obj)
-            data = {}
+#             data = {}
             try:
                 followers = api.get_followers()['data']['openid']
             except:

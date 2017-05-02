@@ -140,7 +140,11 @@ class IwechatSettings(zope.interface.Interface):
     preview = schema.ASCIILine(
             title=_(u"Preview image URL"),
             required=False,
-        )        
+        )
+    mediaid = schema.ASCIILine(
+            title=_(u"media id for the forever image"),
+            required=False,
+        )            
     
 class ISendWechatEvent(zope.interface.Interface):
     """

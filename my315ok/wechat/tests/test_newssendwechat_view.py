@@ -15,6 +15,7 @@ import unittest
 
 from plone.namedfile.file import NamedImage
 import os
+from my315ok.wechat.tests.test_api import dummy_image
 
 def getFile(filename):
     """ return contents of the file with the given name """
@@ -39,7 +40,9 @@ class TestProductsFolderView(unittest.TestCase):
                                          )
         data = getFile('image.jpg').read()
         item = portal['news1']
-        item.setImage(data, content_type="image/jpg")
+        item.image = dummy_image() 
+        item.image_caption = "news image"        
+
         portal.invokeFactory('my315ok.wechat.content.menufolder', 'menufolder1',title="menufolder1")
         
         portal['menufolder1'].invokeFactory('my315ok.wechat.content.menu','menu1',
@@ -75,6 +78,7 @@ class TestProductsFolderView(unittest.TestCase):
         auth = hmac.new(secret, TEST_USER_NAME, sha).hexdigest()
         request.form = {
                         '_authenticator': auth,
+                        'type':'system',
                         'id': 'news1'}
         view = self.portal.restrictedTraverse('@@ajax_send_weixin')
         result = view()
@@ -109,8 +113,6 @@ class TestProductsFolderView(unittest.TestCase):
 
         page = folder.absolute_url() + '/@@send_as_wechat'
         browser.open(page)
-        import pdb
-        pdb.set_trace()
         self.assertTrue('id="send"' in browser.contents)        
         
                       
