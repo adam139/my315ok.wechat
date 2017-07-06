@@ -143,31 +143,57 @@ class Allcontents(setupbase):
                 "button":[
                     {
                         "type":"click",
-                        "name":"今日歌曲",
-                        "key":"V1001_TODAY_MUSIC"
-                    },
-                    {
-                        "type":"click",
-                        "name":"歌手简介",
-                        "key":"V1001_TODAY_SINGER"
-                    },
-                    {
-                        "name":"菜单",
+                        "name":"信息公开",
+                        "key":"xinxigongkai",
                         "sub_button":[
                             {
                                 "type":"view",
-                                "name":"搜索",
-                                "url":"http://www.soso.com/"
+                                "name":"通知公告",
+                                "url":"http://www.xtshzz.org/xinxigongkai/tongzhigonggao"
                             },
                             {
                                 "type":"view",
-                                "name":"视频",
-                                "url":"http://v.qq.com/"
+                                "name":"政策法规",
+                                "url":"http://www.xtshzz.org/xinxigongkai/zhengcefagui"
+                            }
+                        ]
+                    },
+                    {
+                        "type":"click",
+                        "name":"新闻中心",
+                        "key":"xinwenzhongxin",
+                        "sub_button":[
+                            {
+                                "type":"view",
+                                "name":"工作动态",
+                                "url":"http://www.xtshzz.org/xinwenzhongxin/guanligongzuodongtai"
                             },
                             {
-                                "type":"click",
-                                "name":"赞一下我们",
-                                "key":"V1001_GOOD"
+                                "type":"view",
+                                "name":"组织风采",
+                                "url":"http://www.xtshzz.org/xinwenzhongxin/shehuizuzhifengcai"
+                            }
+                        ]
+                    },
+                    {
+                        "name":"指尖支部",
+                        "type":"click",
+                        "key":"zhijianzhibu",
+                        "sub_button":[
+                            {
+                                "type":"view",
+                                "name":"党建信息",
+                                "url":"http://www.xtshzz.org/zhijianzhibu/dangjianxinxi"
+                            },
+                            {
+                                "type":"view",
+                                "name":"党务管理",
+                                "url":"http://www.xtshzz.org/zhijianzhibu/dangwuguanli"
+                            },
+                            {
+                                "type":"view",
+                                "name":"在线培训",
+                                "url":"http://www.xtshzz.org/zhijianzhibu/zaixianpeixun"
                             }
                         ]
                     }
@@ -271,6 +297,8 @@ class Allcontents(setupbase):
         event.notify(SendWechatEvent(item))
     def test_prod_send(self):
         item = self.portal['productfolder1']['product2']
+        import pdb
+        pdb.set_trace()
         event.notify(SendWechatEvent(item))    
     def test_articles_send(self):
         item = self.portal['container1']
