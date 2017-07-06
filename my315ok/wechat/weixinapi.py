@@ -39,9 +39,9 @@ class BaseApi(Client):
         token = settings.token
         if not bool(token):token = "plone2018"
         app_id = settings.appid
-        if not bool(app_id):app_id = "wx08178af75244cb5d" 
+        if not bool(app_id):app_id = "wx77d2f3625808f911" 
         app_secret = settings.appsecret
-        if not bool(app_secret):app_secret = "502408a50b79bfafa5f354d99d204dc7"
+        if not bool(app_secret):app_secret = "b66e860a24452f782dc40d3daab6a79a"
         encoding_aes_key = settings.encoding_aes_key
         self.config.update(
                 TOKEN=token,
