@@ -139,7 +139,7 @@ class DexterityContainer(DexterityItem):
             request = getattr(obj, "REQUEST", None)
             #call product folder view
             folderview = getMultiAdapter((obj, request),name=u"contentlisting")
-            subitems = folderview(batch=True, b_size=3, b_start=0)
+            subitems = folderview(batch=True, b_size=3,sort_on="created",sort_order="reverse")
             ars = [] # article array, member item is a news item 
             k = 0           
             for brain in subitems:
