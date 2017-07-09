@@ -57,12 +57,12 @@ class setupbase(unittest.TestCase):
         data = getFile('image.png').read()
         item = portal['productfolder1']['product1']
         item.image = NamedImage(data, 'image/png', u'image.png')
-        item.text = "<p>test send dexterity object</p>"
+        item.text = "<p>test send dexterity object</p><p>this is image:<img src='http://images.315ok.org/xtshzz/images/qrcode_xtshzzdj.jpg' alt='' /></p>"
         item.reindexObject(idxs=["text"])        
         data2 = getFile('image.jpg').read()        
         item2 = portal['productfolder1']['product2']
         item2.image = NamedImage(data2, 'image/jpeg', u'image.jpg')
-        item2.text = "<p>test send dexterity object</p>"
+        item2.text = "<p>test send dexterity object</p><p>this is image:<img src='http://images.315ok.org/xtshzz/images/qrcode_xtshzzdj.jpg' alt='' /></p>"
         item2.reindexObject(idxs=["text"])            
 
         portal['container1'].invokeFactory('News Item','news1',
@@ -252,8 +252,8 @@ class Allcontents(setupbase):
 #        imgobj =  StringIO(imgobj.read())
         upreturn = self.api.upload_media('image',imgobj)
         imgobj.close()
-#        import pdb
-#        pdb.set_trace()
+        import pdb
+        pdb.set_trace()
         self.assertEqual('image',upreturn['type'])
         
         

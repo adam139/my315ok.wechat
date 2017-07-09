@@ -8,6 +8,8 @@ from plone.registry.interfaces import IRegistry
 from my315ok.wechat.interfaces import IwechatSettings
 from my315ok.wechat.localapi import check_error
 # from my315ok.wechat.tests.test_api import getFile
+from bs4 import BeautifulSoup
+
 def getFile(filename):
     """ return contents of the file with the given name """
     filename = os.path.join(os.path.dirname(__file__) + "/tests", filename)
@@ -80,6 +82,28 @@ class Content(object):
             return rt["media_id"]
         except:
             raise Exception("some error:can't upload image")            
+
+    def get_imgobj(self,imgsrc):
+        """从 img tag src property构造imgobj        
+        parameters: 
+            imgsrc is the images origin src,            
+        return the image obj
+        """
+#         update_mid = False
+        try:
+            import urllib2
+            imgstr = urllib2.urlopen(imgsrc).read()
+            imgobj = Image.open(StringIO(imgstr))
+            suffix = (imgobj.format).lower()
+            filename = "news.%s" % suffix
+            imgfile = putFile(filename)
+            imgobj.save(imgfile)
+            del imgobj
+            filename = open(imgfile,'r')
+        except:                                    
+            filename = getFile("avatar_default.jpg")
+        return filename                          
+ 
         
     def text(self,obj):
         text = obj.getText()
@@ -122,8 +146,30 @@ class DexterityItem(Content):
             text = obj.text.output
         except:
             text = obj.text
+
+        text = self.transfer_img(text)
         return text
         
+    def transfer_img(self,source):
+        "transfer all img tags to tenxun image server through upload permanent api "
+        soup = BeautifulSoup(source,"html.parser")
+        imgs = soup.find_all("img")
+        if len(imgs) == 0:return source
+
+        for i in imgs:
+            old_src = i['src']
+            if len(old_src) == 0:continue            
+            try:
+                imgobj = self.get_imgobj(old_src)
+                rt = self.api.upload_permanent_media("image",imgobj)
+                rt = check_error(rt)
+                url = rt['url']
+                i['src'] = url
+            except:
+                continue
+        return  soup.prettify() 
+            
+    
     def image_data(self,obj):
         imgobj = StringIO(obj.image.data)
         return imgobj
