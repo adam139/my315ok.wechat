@@ -3,6 +3,7 @@ from zope.component import getMultiAdapter
 from cStringIO import StringIO
 from PIL import Image
 import os
+import re
 from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
 from my315ok.wechat.interfaces import IwechatSettings
@@ -153,8 +154,14 @@ class DexterityItem(Content):
     def transfer_img(self,source):
         "transfer all img tags to tenxun image server through upload permanent api "
         soup = BeautifulSoup(source,"html.parser")
-        imgs = soup.find_all("img")
-        if len(imgs) == 0:return source
+        lastp = soup.new_tag("p",style="text-align:center")
+        qrcode = soup.new_tag("img",src="http://mmbiz.qpic.cn/mmbiz_jpg/n13LXaB2n42z6zLibGAWsmh1pbaAt53MWA7qZQoAc1zhlGae8ODHaUHkCJgvBrJcX6fnWoaL4nd4OjjpzQT6J6w/640?wx_fmt=jpeg&amp;amp;wxfrom=5&amp;amp;wx_lazy=1",alt="qrcode") 
+        lastp.append(qrcode)
+#         import pdb
+#         pdb.set_trace()
+        soup.find_all('p')[-1].insert_after(lastp)        
+        imgs = soup.find_all(src=re.compile("^(?!.*mmbiz)"))
+#         if len(imgs) == 0:return source
 
         for i in imgs:
             old_src = i['src']
@@ -168,7 +175,11 @@ class DexterityItem(Content):
             except:
                 continue
         return  soup.prettify() 
-            
+
+    def append_qrcode(self,source):
+        "添加qrcode"
+        pass
+                
     
     def image_data(self,obj):
         imgobj = StringIO(obj.image.data)
