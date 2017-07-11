@@ -153,13 +153,16 @@ class DexterityItem(Content):
         
     def transfer_img(self,source):
         "transfer all img tags to tenxun image server through upload permanent api "
-        soup = BeautifulSoup(source,"html.parser")
+        soup = BeautifulSoup(source,"html.parser")        
+        secondp = soup.new_tag("p",style="text-align:center;color:red")
+        secondp.string = u"长按二维码或扫描即可关注"
         lastp = soup.new_tag("p",style="text-align:center")
         qrcode = soup.new_tag("img",src="http://mmbiz.qpic.cn/mmbiz_jpg/n13LXaB2n42z6zLibGAWsmh1pbaAt53MWA7qZQoAc1zhlGae8ODHaUHkCJgvBrJcX6fnWoaL4nd4OjjpzQT6J6w/640?wx_fmt=jpeg&amp;amp;wxfrom=5&amp;amp;wx_lazy=1",alt="qrcode") 
         lastp.append(qrcode)
 #         import pdb
 #         pdb.set_trace()
-        soup.find_all('p')[-1].insert_after(lastp)        
+        soup.find_all('p')[-1].insert_after(lastp)
+        soup.find_all('p')[-1].insert_after(secondp)        
         imgs = soup.find_all(src=re.compile("^(?!.*mmbiz)"))
 #         if len(imgs) == 0:return source
 
