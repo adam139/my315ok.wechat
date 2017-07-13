@@ -169,21 +169,26 @@ class DexterityItem(Content):
 #         import pdb
 #         pdb.set_trace()
         soup.find_all('p')[-1].insert_after(lastp)
-        soup.find_all('p')[-1].insert_after(secondp)        
-        imgs = soup.find_all(src=re.compile("^(?!.*mmbiz)"))
+        soup.find_all('p')[-1].insert_after(secondp)
+        # all smallest images
+        allp = soup.find_all("p",class_="visible-xs-block")        
+#         imgs = soup.find_all(src=re.compile("^(?!.*mmbiz)"))
 #         if len(imgs) == 0:return source
 
-        for i in imgs:
-            old_src = i['src']
+        for i in allp:
+            small = i.extract()
+        imgs = soup.find_all(src=re.compile("^(?!.*mmbiz)"))
+        for img in imgs:            
+            old_src = img['src']
             if len(old_src) == 0:continue
-            if old_src.startswith('http'):
+            if not old_src.startswith('http'):
                 old_src = self.relative2absolute(old_src)            
             try:
                 imgobj = self.get_imgobj(old_src)
                 rt = self.api.upload_permanent_media("image",imgobj)
                 rt = check_error(rt)
                 url = rt['url']
-                i['src'] = url
+                img['src'] = url
             except:
                 continue
         return  soup.prettify() 
