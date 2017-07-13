@@ -105,6 +105,13 @@ class Content(object):
             filename = getFile("avatar_default.jpg")
         return filename                          
  
+    def relative2absolute(self,old_src):
+        "transfer relative url to absolute url."
+        obj = self.obj
+        from urlparse import urljoin
+#         import pdb
+#         pdb.set_trace()
+        return  urljoin(obj.absolute_url(), old_src)
         
     def text(self,obj):
         text = obj.getText()
@@ -168,7 +175,9 @@ class DexterityItem(Content):
 
         for i in imgs:
             old_src = i['src']
-            if len(old_src) == 0:continue            
+            if len(old_src) == 0:continue
+            if old_src.startswith('http'):
+                old_src = self.relative2absolute(old_src)            
             try:
                 imgobj = self.get_imgobj(old_src)
                 rt = self.api.upload_permanent_media("image",imgobj)
