@@ -227,7 +227,7 @@ class DexterityItem(Content):
             news_parameters["content"] = text
             news_parameters["content_source_url"] = obj.absolute_url()            
             news_parameters["digest"] = obj.description
-            news_parameters["show_cover_pic"] = "1"
+            news_parameters["show_cover_pic"] = "0"
         
             if output['mid'] != '':
                 mid = output['mid']                                 
