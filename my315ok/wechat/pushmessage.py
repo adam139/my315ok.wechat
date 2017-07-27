@@ -125,7 +125,6 @@ class Content(object):
             mid = self.upload_image(api,obj)            
             news_parameters ={}    # declare a news item parameters
             news_parameters["thumb_media_id"] = mid
-
             news_parameters["author"] = obj.getOwner().getUserName()
             news_parameters["title"] = obj.title
             news_parameters["content_source_url"] = obj.absolute_url()
@@ -155,30 +154,27 @@ class DexterityItem(Content):
         except:
             text = obj.text
 
-        text = self.transfer_img(text)
-        return text
+        output = self.transfer_img(text)
+        return output
         
     def transfer_img(self,source):
         "transfer all img tags to tenxun image server through upload permanent api "
-        soup = BeautifulSoup(source,"html.parser")        
-        secondp = soup.new_tag("p",style="text-align:center;color:red")
-        secondp.string = u"长按二维码或扫描即可关注"
-        lastp = soup.new_tag("p",style="text-align:center")
-        qrcode = soup.new_tag("img",src="http://mmbiz.qpic.cn/mmbiz_jpg/n13LXaB2n42z6zLibGAWsmh1pbaAt53MWA7qZQoAc1zhlGae8ODHaUHkCJgvBrJcX6fnWoaL4nd4OjjpzQT6J6w/640?wx_fmt=jpeg&amp;amp;wxfrom=5&amp;amp;wx_lazy=1",alt="qrcode") 
-        lastp.append(qrcode)
-#         import pdb
-#         pdb.set_trace()
-        soup.find_all('p')[-1].insert_after(lastp)
-        soup.find_all('p')[-1].insert_after(secondp)
-        # all smallest images
-        allp = soup.find_all("p",class_="visible-xs-block")        
-#         imgs = soup.find_all(src=re.compile("^(?!.*mmbiz)"))
-#         if len(imgs) == 0:return source
-
-        for i in allp:
-            small = i.extract()
+#         soup = BeautifulSoup(source,"html.parser")        
+#         secondp = soup.new_tag("p",style="text-align:center;color:red")
+#         secondp.string = u"长按二维码或扫描即可关注"
+#         lastp = soup.new_tag("p",style="text-align:center")
+#         qrcode = soup.new_tag("img",src="http://mmbiz.qpic.cn/mmbiz_jpg/n13LXaB2n42z6zLibGAWsmh1pbaAt53MWA7qZQoAc1zhlGae8ODHaUHkCJgvBrJcX6fnWoaL4nd4OjjpzQT6J6w/640?wx_fmt=jpeg&amp;amp;wxfrom=5&amp;amp;wx_lazy=1",alt="qrcode") 
+#         lastp.append(qrcode)
+#         soup.find_all('p')[-1].insert_after(lastp)
+#         soup.find_all('p')[-1].insert_after(secondp)
+        soup = self.append_qrcode(source)
+        # remove all smallest images
+        soup = self.remove_duplicate_imgs(soup)
         imgs = soup.find_all(src=re.compile("^(?!.*mmbiz)"))
-        for img in imgs:            
+        output = {'mid':'','html':''}
+        j = 0
+        for img in imgs:
+            j = j + 1            
             old_src = img['src']
             if len(old_src) == 0:continue
             if not old_src.startswith('http'):
@@ -187,15 +183,65 @@ class DexterityItem(Content):
                 imgobj = self.get_imgobj(old_src)
                 rt = self.api.upload_permanent_media("image",imgobj)
                 rt = check_error(rt)
-                url = rt['url']
-                img['src'] = url
+                src = rt['url']
+                filename = self.get_imgobj(src)
+                rt2 = self.api.upload_media('image',filename)
+                rt2 = check_error(rt2)
+                filename.close()
+                img['src'] = src
+                if j == 1:output['mid'] = rt2['media_id']
             except:
                 continue
-        return  soup.prettify() 
+        output['html'] = soup.prettify()
+        return  output 
 
     def append_qrcode(self,source):
         "添加qrcode"
-        pass
+        soup = BeautifulSoup(source,"html.parser")        
+        secondp = soup.new_tag("p",style="text-align:center;color:red")
+        secondp.string = u"长按二维码或扫描即可关注"
+        lastp = soup.new_tag("p",style="text-align:center")
+        qrcode = soup.new_tag("img",src="http://mmbiz.qpic.cn/mmbiz_jpg/n13LXaB2n42z6zLibGAWsmh1pbaAt53MWA7qZQoAc1zhlGae8ODHaUHkCJgvBrJcX6fnWoaL4nd4OjjpzQT6J6w/640?wx_fmt=jpeg&amp;amp;wxfrom=5&amp;amp;wx_lazy=1",alt="qrcode") 
+        lastp.append(qrcode)
+        soup.find_all('p')[-1].insert_after(lastp)
+        soup.find_all('p')[-1].insert_after(secondp)
+        return soup
+    
+    def remove_duplicate_imgs(self,soup):
+        "remove small duplicate images"
+        # remove all smallest images
+        allp = soup.find_all("p",class_="visible-xs-block")       
+        for i in allp:
+            small = i.extract()
+        return soup
+    
+    def upload_news(self):
+            """上传图文消息""" 
+            obj = self.obj
+            api = self.api
+            output = self.text(obj)
+            text = output['html']
+            news_parameters ={}    # declare a news item parameters
+            news_parameters["author"] = obj.getOwner().getUserName()
+            news_parameters["title"] = obj.title
+            news_parameters["content"] = text
+            news_parameters["content_source_url"] = obj.absolute_url()            
+            news_parameters["digest"] = obj.description
+            news_parameters["show_cover_pic"] = "1"
+        
+            if output['mid'] != '':
+                mid = output['mid']                                 
+            else:                   
+                mid = self.upload_image(api,obj)           
+            news_parameters["thumb_media_id"] = mid
+            ars = [] # article array, member item is a news item
+            ars.append(news_parameters)
+            data = {}
+            data["articles"] = ars            
+            newsid = api.upload_news(data)  
+            newsdic = {}
+            newsdic["media_id"] = newsid
+            return newsdic      
                 
     
     def image_data(self,obj):
