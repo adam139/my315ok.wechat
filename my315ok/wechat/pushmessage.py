@@ -55,9 +55,6 @@ class Content(object):
         except:  # if can't get obj's image data,then use a  default image
             registry = getUtility(IRegistry)
             settings = registry.forInterface(IwechatSettings)
-#             mediaid = settings.mediaid
-#             if bool(mediaid): return mediaid
-#             update_mid = True 
             import urllib2
             if settings.preview == None:
                 filename = getFile("avatar_default.jpg")
@@ -72,11 +69,7 @@ class Content(object):
                 del imgobj
                 filename = open(imgfile,'r')               
         try:
-#             if update_mid:
-#                 rt = api.upload_permanent_media("image",filename)
-#                 rt = check_error(rt)
-#                 settings.mediaid = rt["media_id"].encode('utf-8')               
-#             else:
+
             rt = api.upload_media('image',filename)                
             rt = check_error(rt)
             filename.close()
@@ -201,7 +194,13 @@ class DexterityItem(Content):
         secondp = soup.new_tag("p",style="text-align:center;color:red")
         secondp.string = u"长按二维码或扫描即可关注"
         lastp = soup.new_tag("p",style="text-align:center")
-        qrcode = soup.new_tag("img",src="http://mmbiz.qpic.cn/mmbiz_jpg/n13LXaB2n42z6zLibGAWsmh1pbaAt53MWA7qZQoAc1zhlGae8ODHaUHkCJgvBrJcX6fnWoaL4nd4OjjpzQT6J6w/640?wx_fmt=jpeg&amp;amp;wxfrom=5&amp;amp;wx_lazy=1",alt="qrcode") 
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IwechatSettings)
+        if settings.qrcode == None:
+            imgurl = "http://mmbiz.qpic.cn/mmbiz_jpg/n13LXaB2n42z6zLibGAWsmh1pbaAt53MWA7qZQoAc1zhlGae8ODHaUHkCJgvBrJcX6fnWoaL4nd4OjjpzQT6J6w/640?wx_fmt=jpeg&amp;amp;wxfrom=5&amp;amp;wx_lazy=1"
+        else:
+            imgurl = settings.qrcode        
+        qrcode = soup.new_tag("img",src=imgurl,alt="qrcode") 
         lastp.append(qrcode)
         soup.find_all('p')[-1].insert_after(lastp)
         soup.find_all('p')[-1].insert_after(secondp)

@@ -20,7 +20,10 @@
 	</record>
   <record interface="my315ok.wechat.interfaces.IwechatSettings.mediaid">
     <value></value>
-	</record>				
+	</record>
+  <record interface="my315ok.wechat.interfaces.IwechatSettings.qrcode">
+    <value></value>
+	</record>					
 </records>
 
 </registry>

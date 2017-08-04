@@ -145,7 +145,10 @@ class IwechatSettings(zope.interface.Interface):
             title=_(u"media id for the forever image"),
             required=False,
         )            
-    
+    qrcode = schema.ASCIILine(
+            title=_(u"the src of the weixin's qrcode"),
+            required=False,
+        )    
 class ISendWechatEvent(zope.interface.Interface):
     """
     a send wechat event mark interface for send out wechat from system wechat account.
