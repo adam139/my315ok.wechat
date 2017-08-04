@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<object name="my315ok.wechat.content.textmessage"
+<object name="my315ok.wechat.content.locationmessage"
    meta_type="Dexterity FTI"
    i18n:domain="my315ok.wechat" xmlns:i18n="http://xml.zope.org/namespaces/i18n">
 
   <!-- Basic metadata -->
-  <property name="title" i18n:translate="">text message</property>
+  <property name="title" i18n:translate="">location message</property>
   <property name="description"
-    i18n:translate="">a text message  for weixin self-define message</property>
+    i18n:translate="">a location message  for weixin self-define message</property>
   <property name="icon_expr">string:${portal_url}/document_icon.png</property>
-  <property name="factory">my315ok.wechat.content.message.TextMessage</property>
+  <property name="factory">my315ok.wechat.content.message.LocationMessage</property>
   <property name="global_allow">False</property>
   <property name="filter_content_types">True</property>  
   <property name="allowed_content_types">
@@ -18,8 +18,8 @@
   <property name="allow_discussion">True</property>
 
   <!-- schema and class used for content items -->
-  <property name="schema">my315ok.wechat.interfaces.ITextMessage</property> 
-  <property name="klass">my315ok.wechat.content.message.TextMessage</property>
+  <property name="schema">my315ok.wechat.interfaces.ILocationMessage</property> 
+  <property name="klass">my315ok.wechat.content.message.LocationMessage</property>
 
   <property name="behaviors">
      <element value="plone.app.content.interfaces.INameFromTitle" />

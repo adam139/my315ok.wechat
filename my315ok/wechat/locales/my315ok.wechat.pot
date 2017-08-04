@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2015-01-06 03:59+0000\n"
+"POT-Creation-Date: 2017-08-04 08:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,11 +42,19 @@ msgstr ""
 msgid "Id of message"
 msgstr ""
 
+#: ./configure.zcml:47
+msgid "Installs the my315ok.wechat package"
+msgstr ""
+
 #: ./interfaces.py:53
 msgid "Location accuracy of the location message"
 msgstr ""
 
-#: ./browser/register.py:93
+#: ./interfaces.py:141
+msgid "Preview image URL"
+msgstr ""
+
+#: ./browser/register.py:90
 msgid "Register for site member"
 msgstr ""
 
@@ -60,6 +68,10 @@ msgstr ""
 
 #: ./interfaces.py:62
 msgid "URL of the link message"
+msgstr ""
+
+#: ./configure.zcml:54
+msgid "Uninstalls my315ok.wechat package"
 msgstr ""
 
 #: ./behaviors/qrcode.py:15
@@ -76,25 +88,43 @@ msgstr ""
 msgid "Wechat settings"
 msgstr ""
 
+#: ./profiles/default/types/my315ok.wechat.content.imagemessage.xml
+msgid "a image message  for weixin self-define message"
+msgstr ""
+
+#: ./profiles/default/types/my315ok.wechat.content.linkmessage.xml
+msgid "a link message  for weixin self-define message"
+msgstr ""
+
+#: ./profiles/default/types/my315ok.wechat.content.locationmessage.xml
+msgid "a location message  for weixin self-define message"
+msgstr ""
+
 #: ./profiles/default/types/my315ok.wechat.content.menu.xml
 msgid "a menu item for weixin self-define menu"
 msgstr ""
 
-#: ./profiles/default/types/my315ok.wechat.content.imagemessage.xml
-#: ./profiles/default/types/my315ok.wechat.content.linkmessage.xml
-#: ./profiles/default/types/my315ok.wechat.content.locationmessage.xml
+#: ./profiles/default/types/my315ok.wechat.content.textmessage.xml
 msgid "a text message  for weixin self-define message"
 msgstr ""
 
-#: ./interfaces.py:127
+#: ./profiles/default/types/my315ok.wechat.content.videomessage.xml
+msgid "a video message  for weixin self-define message"
+msgstr ""
+
+#: ./profiles/default/types/my315ok.wechat.content.voicemessage.xml
+msgid "a voice message  for weixin self-define message"
+msgstr ""
+
+#: ./interfaces.py:125
 msgid "app id"
 msgstr ""
 
-#: ./interfaces.py:131
+#: ./interfaces.py:129
 msgid "app secret"
 msgstr ""
 
-#: ./interfaces.py:135
+#: ./interfaces.py:133
 msgid "app token"
 msgstr ""
 
@@ -106,7 +136,7 @@ msgstr ""
 msgid "appsecret"
 msgstr ""
 
-#: ./browser/register.py:143
+#: ./browser/register.py:140
 msgid "cancel"
 msgstr ""
 
@@ -127,8 +157,16 @@ msgstr ""
 msgid "description of the link message"
 msgstr ""
 
+#: ./interfaces.py:137
+msgid "encoding aes key"
+msgstr ""
+
 #: ./interfaces.py:37
 msgid "format of the voice message"
+msgstr ""
+
+#: ./profiles/default/types/my315ok.wechat.content.imagemessage.xml
+msgid "image message"
 msgstr ""
 
 #: ./vocabulary.py:26
@@ -170,6 +208,10 @@ msgstr ""
 msgid "link message"
 msgstr ""
 
+#: ./profiles/default/types/my315ok.wechat.content.locationmessage.xml
+msgid "location message"
+msgstr ""
+
 #. Default: "log text"
 #: ./behaviors/wechat_log.py:30
 msgid "log text"
@@ -177,6 +219,10 @@ msgstr ""
 
 #: ./interfaces.py:52
 msgid "longitude of the location message"
+msgstr ""
+
+#: ./interfaces.py:145
+msgid "media id for the forever image"
 msgstr ""
 
 #: ./interfaces.py:31
@@ -211,6 +257,10 @@ msgstr ""
 msgid "message folder"
 msgstr ""
 
+#: ./configure.zcml:47
+msgid "my315ok.wechat"
+msgstr ""
+
 #: ./browser/register.py:50
 msgid "privacy"
 msgstr ""
@@ -224,12 +274,10 @@ msgstr ""
 msgid "qrcode Image"
 msgstr ""
 
-#: ./browser/register.py:114
+#: ./browser/register.py:111
 msgid "submit"
 msgstr ""
 
-#: ./profiles/default/types/my315ok.wechat.content.imagemessage.xml
-#: ./profiles/default/types/my315ok.wechat.content.locationmessage.xml
 #: ./profiles/default/types/my315ok.wechat.content.textmessage.xml
 msgid "text message"
 msgstr ""
@@ -266,23 +314,38 @@ msgstr ""
 msgid "type of message"
 msgstr ""
 
+#: ./configure.zcml:54
+msgid "uninstall my315ok.wechat"
+msgstr ""
+
+#: ./profiles/default/types/my315ok.wechat.content.videomessage.xml
+msgid "video message"
+msgstr ""
+
 #: ./vocabulary.py:13
 msgid "view skip event"
+msgstr ""
+
+#: ./profiles/default/types/my315ok.wechat.content.voicemessage.xml
+msgid "voice message"
 msgstr ""
 
 #: ./behaviors/qrcode.py:24
 msgid "wechat qrcode image"
 msgstr ""
 
-#: ./interfaces.py:128
+#: ./interfaces.py:126
 msgid "weixin app id"
 msgstr ""
 
-#: ./interfaces.py:132
+#: ./interfaces.py:130
 msgid "weixin app secret"
 msgstr ""
 
-#: ./interfaces.py:136
+#: ./interfaces.py:134
 msgid "weixin app token"
 msgstr ""
 
+#: ./interfaces.py:138
+msgid "weixin encoding aes key"
+msgstr ""

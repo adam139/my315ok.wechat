@@ -6,7 +6,7 @@
   <!-- Basic metadata -->
   <property name="title" i18n:translate="">link message</property>
   <property name="description"
-    i18n:translate="">a text message  for weixin self-define message</property>
+    i18n:translate="">a link message  for weixin self-define message</property>
   <property name="icon_expr">string:${portal_url}/document_icon.png</property>
   <property name="factory">my315ok.wechat.content.message.LinkMessage</property>
   <property name="global_allow">False</property>

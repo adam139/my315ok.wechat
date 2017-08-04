@@ -1,289 +1,352 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: wechat\n"
-"POT-Creation-Date: 2015-01-06 03:59+0000\n"
-"PO-Revision-Date: 2015-01-06 12:17+0800\n"
-"Last-Translator: adam <yuejun.tang@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2017-08-04 08:43+0000\n"
+"PO-Revision-Date: 2017-08-04 16:57+0800\n"
+"Last-Translator: Adam <yuejun.tang@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "Language-Code: en\n"
 "Language-Name: English\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: DOMAIN\n"
-"X-Poedit-Language: Chinese\n"
+"Language-Team: \n"
+"Language: zh\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
-#: ./interfaces.py:51
+#: interfaces.py:51
 msgid " latitude of the location message"
 msgstr "位置信息的纬度"
 
-#: ./profiles/default/types/my315ok.wechat.content.menufolder.xml
+#: profiles/default/types/my315ok.wechat.content.menufolder.xml
 msgid "A container that contain weixin menus"
 msgstr "一个包含微信自定义菜单的容器"
 
-#: ./profiles/default/types/my315ok.wechat.content.messagefolder.xml
+#: profiles/default/types/my315ok.wechat.content.messagefolder.xml
 msgid "A container that contain weixin messages"
 msgstr "一个包含微信信息的容器"
 
-#: ./browser/templates/menu_folder.pt:31
+#: browser/templates/menu_folder.pt:31
 msgid "Add menu item"
 msgstr "添加菜单"
 
-#: ./browser/register.py:54
+#: browser/register.py:54
 msgid "Agree this?"
 msgstr "同意该协议？"
 
-#: ./browser/api_setting_view.py:35
+#: browser/api_setting_view.py:35
 msgid "Edit wechat public account settings"
 msgstr "编辑微信公众号设置"
 
-#: ./interfaces.py:17
+#: interfaces.py:17
 msgid "Id of message"
 msgstr "消息id"
 
-#: ./interfaces.py:53
+#: configure.zcml:47
+msgid "Installs the my315ok.wechat package"
+msgstr "安装wechat模块"
+
+#: interfaces.py:53
 msgid "Location accuracy of the location message"
 msgstr "位置消息的精度"
 
-#: ./browser/register.py:93
+#: interfaces.py:141
+msgid "Preview image URL"
+msgstr "默认封面对象url"
+
+#: browser/register.py:90
 msgid "Register for site member"
 msgstr "注册成为站点会员"
 
-#: ./profiles/default/actions.xml
+#: profiles/default/actions.xml
 msgid "Send as Wechat"
 msgstr "发送微信"
 
-#: ./interfaces.py:30
+#: interfaces.py:30
 msgid "URL of the image message link to"
 msgstr "图片信息链接到的url"
 
-#: ./interfaces.py:62
+#: interfaces.py:62
 msgid "URL of the link message"
 msgstr "链接信息的URL"
 
-#: ./behaviors/qrcode.py:15
-#: ./behaviors/wechat_log.py:18
-#: ./behaviors/wechat_token.py:17
+#: configure.zcml:54
+msgid "Uninstalls my315ok.wechat package"
+msgstr "卸载wechat模块"
+
+#: behaviors/qrcode.py:15 behaviors/wechat_log.py:18
+#: behaviors/wechat_token.py:17
 msgid "Wechat"
 msgstr "微信管理"
 
-#: ./controlpanel.py:17
+#: controlpanel.py:17
 msgid "Wechat control panel"
 msgstr "微信控制面板"
 
-#: ./profiles/default/controlpanel.xml
+#: profiles/default/controlpanel.xml
 msgid "Wechat settings"
 msgstr "微信设置"
 
-#: ./profiles/default/types/my315ok.wechat.content.menu.xml
+#: profiles/default/types/my315ok.wechat.content.imagemessage.xml
+msgid "a image message  for weixin self-define message"
+msgstr "图片类型消息"
+
+#: profiles/default/types/my315ok.wechat.content.linkmessage.xml
+msgid "a link message  for weixin self-define message"
+msgstr "链接类型消息"
+
+#: profiles/default/types/my315ok.wechat.content.locationmessage.xml
+msgid "a location message  for weixin self-define message"
+msgstr "位置类型消息"
+
+#: profiles/default/types/my315ok.wechat.content.menu.xml
 msgid "a menu item for weixin self-define menu"
 msgstr "微信菜单"
 
-#: ./profiles/default/types/my315ok.wechat.content.imagemessage.xml
-#: ./profiles/default/types/my315ok.wechat.content.linkmessage.xml
-#: ./profiles/default/types/my315ok.wechat.content.locationmessage.xml
+#: profiles/default/types/my315ok.wechat.content.textmessage.xml
 msgid "a text message  for weixin self-define message"
 msgstr "文本信息"
 
-#: ./interfaces.py:127
+#: profiles/default/types/my315ok.wechat.content.videomessage.xml
+msgid "a video message  for weixin self-define message"
+msgstr "微视频类型消息"
+
+#: profiles/default/types/my315ok.wechat.content.voicemessage.xml
+msgid "a voice message  for weixin self-define message"
+msgstr "语音类型消息"
+
+#: interfaces.py:125
 msgid "app id"
 msgstr "微信appid"
 
-#: ./interfaces.py:131
+#: interfaces.py:129
 msgid "app secret"
-msgstr ""
+msgstr "微信公众号app secret"
 
-#: ./interfaces.py:135
+#: interfaces.py:133
 msgid "app token"
-msgstr ""
+msgstr "微信公众号app token"
 
-#: ./browser/templates/member_wechat_setting.pt:20
+#: browser/templates/member_wechat_setting.pt:20
 msgid "appid"
-msgstr ""
+msgstr "微信公众号appid"
 
-#: ./browser/templates/member_wechat_setting.pt:22
+#: browser/templates/member_wechat_setting.pt:22
 msgid "appsecret"
-msgstr ""
+msgstr "微信公众号appsecret"
 
-#: ./browser/register.py:143
+#: browser/register.py:140
 msgid "cancel"
 msgstr "取消"
 
-#: ./vocabulary.py:12
+#: vocabulary.py:12
 msgid "click event"
 msgstr "点击推送"
 
-#: ./interfaces.py:24
+#: interfaces.py:24
 msgid "content of message"
 msgstr "信息的内容"
 
 #. Default: "created time"
-#: ./behaviors/wechat_log.py:26
+#: behaviors/wechat_log.py:26
 msgid "created time"
 msgstr "创建时间"
 
-#: ./interfaces.py:61
+#: interfaces.py:61
 msgid "description of the link message"
 msgstr "链接消息的描述"
 
-#: ./interfaces.py:37
+#: interfaces.py:137
+msgid "encoding aes key"
+msgstr "微信公众号加密key"
+
+#: interfaces.py:37
 msgid "format of the voice message"
 msgstr "语音信息的格式"
 
-#: ./vocabulary.py:26
+#: profiles/default/types/my315ok.wechat.content.imagemessage.xml
+msgid "image message"
+msgstr "图片类型消息"
+
+#: vocabulary.py:26
 msgid "is not top menu"
 msgstr "子菜单"
 
-#: ./vocabulary.py:25
+#: vocabulary.py:25
 msgid "is top menu"
 msgstr "主菜单"
 
-#: ./content/menu.py:29
+#: content/menu.py:29
 msgid "is top menu?"
 msgstr "是主菜单吗？"
 
-#: ./content/menu.py:33
+#: content/menu.py:33
 msgid "key value of the menu"
 msgstr "菜单项key值"
 
-#: ./interfaces.py:54
+#: interfaces.py:54
 msgid "label  of the location message"
 msgstr "位置信息的标签"
 
 #. Default: "Appid"
-#: ./behaviors/wechat_token.py:21
+#: behaviors/wechat_token.py:21
 msgid "label_appid"
 msgstr "appid"
 
 #. Default: "Appsecret"
-#: ./behaviors/wechat_token.py:25
+#: behaviors/wechat_token.py:25
 msgid "label_appsecret"
 msgstr "appsecret"
 
 #. Default: "Token"
-#: ./behaviors/wechat_token.py:29
+#: behaviors/wechat_token.py:29
 msgid "label_token"
 msgstr "token"
 
-#: ./profiles/default/types/my315ok.wechat.content.linkmessage.xml
+#: profiles/default/types/my315ok.wechat.content.linkmessage.xml
 msgid "link message"
 msgstr "链接信息"
 
+#: profiles/default/types/my315ok.wechat.content.locationmessage.xml
+msgid "location message"
+msgstr "位置消息"
+
 #. Default: "log text"
-#: ./behaviors/wechat_log.py:30
+#: behaviors/wechat_log.py:30
 msgid "log text"
 msgstr "日志文本"
 
-#: ./interfaces.py:52
+#: interfaces.py:52
 msgid "longitude of the location message"
 msgstr "位置信息的经度"
 
-#: ./interfaces.py:31
+#: interfaces.py:145
+msgid "media id for the forever image"
+msgstr ""
+
+#: interfaces.py:31
 msgid "media id of the image message"
 msgstr "图片消息的媒体id"
 
-#: ./interfaces.py:45
+#: interfaces.py:45
 msgid "media id of the video message"
 msgstr "视频消息的媒体id"
 
-#: ./interfaces.py:38
+#: interfaces.py:38
 msgid "media id of the voice message"
 msgstr "语音消息的媒体id"
 
-#: ./browser/templates/member_wechat_setting.pt:15
+#: browser/templates/member_wechat_setting.pt:15
 msgid "member wechat configuration information"
 msgstr "会员微信配置信息"
 
-#: ./profiles/default/types/my315ok.wechat.content.menu.xml
+#: profiles/default/types/my315ok.wechat.content.menu.xml
 msgid "menu"
 msgstr "菜单"
 
-#: ./content/menu.py:25
+#: content/menu.py:25
 msgid "menu type"
 msgstr "菜单类型"
 
-#: ./profiles/default/types/my315ok.wechat.content.menufolder.xml
+#: profiles/default/types/my315ok.wechat.content.menufolder.xml
 msgid "menufolder"
 msgstr "菜单文件夹"
 
-#: ./profiles/default/types/my315ok.wechat.content.messagefolder.xml
+#: profiles/default/types/my315ok.wechat.content.messagefolder.xml
 msgid "message folder"
 msgstr "消息文件夹"
 
-#: ./browser/register.py:50
+#: configure.zcml:47
+msgid "my315ok.wechat"
+msgstr ""
+
+#: browser/register.py:50
 msgid "privacy"
 msgstr "隐私政策"
 
 #. Default: "processor"
-#: ./behaviors/wechat_log.py:22
+#: behaviors/wechat_log.py:22
 msgid "processor"
 msgstr "处理者"
 
-#: ./behaviors/qrcode.py:19
+#: behaviors/qrcode.py:19
 msgid "qrcode Image"
 msgstr "二维码图片"
 
-#: ./browser/register.py:114
+#: browser/register.py:111
 msgid "submit"
 msgstr "注册"
 
-#: ./profiles/default/types/my315ok.wechat.content.imagemessage.xml
-#: ./profiles/default/types/my315ok.wechat.content.locationmessage.xml
-#: ./profiles/default/types/my315ok.wechat.content.textmessage.xml
+#: profiles/default/types/my315ok.wechat.content.textmessage.xml
 msgid "text message"
 msgstr "文本信息"
 
-#: ./content/menu.py:35
+#: content/menu.py:35
 msgid "the menu link to url"
 msgstr "菜单项跳转url"
 
-#: ./interfaces.py:13
+#: interfaces.py:13
 msgid "the user name of receive message"
 msgstr "接受消息的用户名"
 
-#: ./interfaces.py:14
+#: interfaces.py:14
 msgid "the user name of send message"
 msgstr "发送消息的用户名"
 
-#: ./interfaces.py:44
+#: interfaces.py:44
 msgid "thumb media id of the video message"
 msgstr "视频消息的缩略图id"
 
-#: ./interfaces.py:15
+#: interfaces.py:15
 msgid "time of created message"
 msgstr "创建消息的时间"
 
-#: ./interfaces.py:60
+#: interfaces.py:60
 msgid "title of the link message"
 msgstr "link信息的标题"
 
-#: ./browser/templates/member_wechat_setting.pt:24
+#: browser/templates/member_wechat_setting.pt:24
 msgid "token"
 msgstr "令牌"
 
-#: ./interfaces.py:16
+#: interfaces.py:16
 msgid "type of message"
 msgstr "信息的类型"
 
-#: ./vocabulary.py:13
+#: configure.zcml:54
+msgid "uninstall my315ok.wechat"
+msgstr "卸载wechat模块"
+
+#: profiles/default/types/my315ok.wechat.content.videomessage.xml
+msgid "video message"
+msgstr "视频消息"
+
+#: vocabulary.py:13
 msgid "view skip event"
 msgstr "视图跳转"
 
-#: ./behaviors/qrcode.py:24
+#: profiles/default/types/my315ok.wechat.content.voicemessage.xml
+msgid "voice message"
+msgstr "语音消息"
+
+#: behaviors/qrcode.py:24
 msgid "wechat qrcode image"
 msgstr "微信二维码"
 
-#: ./interfaces.py:128
+#: interfaces.py:126
 msgid "weixin app id"
 msgstr "微信appid"
 
-#: ./interfaces.py:132
+#: interfaces.py:130
 msgid "weixin app secret"
 msgstr "微信app secret"
 
-#: ./interfaces.py:136
+#: interfaces.py:134
 msgid "weixin app token"
 msgstr "微信app token"
 
+#: interfaces.py:138
+msgid "weixin encoding aes key"
+msgstr "微信公众号加密key"
