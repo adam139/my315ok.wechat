@@ -2,7 +2,6 @@
     <index name="istopmenu" meta_type="FieldIndex" remove="True">
         <indexed_attr value="istopmenu"/>
     </index>	
-    <column value="istopmenu" remove="True"/>
     <index name="FromUserName" meta_type="FieldIndex" remove="True">
         <indexed_attr value="FromUserName"/>
     </index>	  
