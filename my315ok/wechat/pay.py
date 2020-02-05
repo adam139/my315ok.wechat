@@ -251,8 +251,8 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         self.parameters['total_fee'] = total_fee
         self.postXml()
         self.result = self.xmlToArray(self.response)
-        import pdb
-        pdb.set_trace()
+#         import pdb
+#         pdb.set_trace()
         prepay_id = self.result["prepay_id"]
         return prepay_id
 
