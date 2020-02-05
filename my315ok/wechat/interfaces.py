@@ -138,7 +138,11 @@ class IwechatSettings(zope.interface.Interface):
     preview = schema.ASCIILine(
             title=_(u"Preview image URL"),
             required=False,
-        )        
+        )
+    redirecturi = schema.ASCIILine(
+            title=_(u"the redirect uri of jsapi authorize page"),
+            required=True,
+        )            
     
 class ISendWechatEvent(zope.interface.Interface):
     """

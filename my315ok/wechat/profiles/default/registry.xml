@@ -14,7 +14,10 @@
 	</record>
   <record interface="my315ok.wechat.interfaces.IwechatSettings.preview">
     <value>http://images.315ok.org/xtshzz/images/qrcode.jpg</value>
-	</record>			
+	</record>
+  <record interface="my315ok.wechat.interfaces.IwechatSettings.redirecturi">
+    <value>http://www.xtcs.org/</value>
+	</record>				
 </records>
 
 </registry>
