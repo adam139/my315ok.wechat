@@ -97,7 +97,7 @@ class Common_util_pub(object):
 
     def xmlToArray(self, xml):
         """将xml转为array"""
-        print xml
+
         return WeixinHelper.xmlToArray(xml)
 
     def postXmlCurl(self, xml, url, second=30):
@@ -229,7 +229,7 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         """生成接口参数xml"""
         #检测必填参数
         self.parameters['out_trade_no'] = self.createNoncestr()
-        self.parameters['notify_url'] = "http://www.xtcs.org/"
+        self.parameters['notify_url'] = "http://weixin.315ok.org/@@notify_ajax"
         self.parameters['trade_type'] = "JSAPI"
     
         if any(self.parameters[key] is None for key in ("out_trade_no", "body", "total_fee", "notify_url", "trade_type")):
@@ -251,8 +251,7 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         self.parameters['total_fee'] = total_fee
         self.postXml()
         self.result = self.xmlToArray(self.response)
-#         import pdb
-#         pdb.set_trace()
+
         prepay_id = self.result["prepay_id"]
         return prepay_id
 
@@ -407,6 +406,7 @@ class Wxpay_server_pub(Common_util_pub):
 
     def checkSign(self):
         """校验签名"""
+
         tmpData = dict(self.data) #make a copy to save sign
         del tmpData['sign']
         sign = self.getSign(tmpData) #本地签名
@@ -434,6 +434,7 @@ class Wxpay_server_pub(Common_util_pub):
 
 class Notify_pub(Wxpay_server_pub):
     """通用通知接口"""
+    
     
 
 
