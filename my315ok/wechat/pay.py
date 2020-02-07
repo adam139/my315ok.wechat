@@ -93,11 +93,12 @@ class Common_util_pub(object):
             else:
                 xml.append("<{0}><![CDATA[{1}]]></{0}>".format(k, v))
         xml.append("</xml>")
+
         return "".join(xml)
 
     def xmlToArray(self, xml):
         """将xml转为array"""
-
+        
         return WeixinHelper.xmlToArray(xml)
 
     def postXmlCurl(self, xml, url, second=30):
@@ -229,7 +230,7 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         """生成接口参数xml"""
         #检测必填参数
         self.parameters['out_trade_no'] = self.createNoncestr()
-        self.parameters['notify_url'] = "http://weixin.315ok.org/@@notify_ajax"
+        self.parameters['notify_url'] = "http://weixin.315ok.org/notify"
         self.parameters['trade_type'] = "JSAPI"
     
         if any(self.parameters[key] is None for key in ("out_trade_no", "body", "total_fee", "notify_url", "trade_type")):
@@ -239,7 +240,7 @@ class UnifiedOrder_pub(Wxpay_client_pub):
 
         self.parameters["appid"] = WxPayConf_pub.APPID  #公众账号ID
         self.parameters["mch_id"] = WxPayConf_pub.MCHID  #商户号
-        self.parameters["spbill_create_ip"] = "127.0.0.1"  #终端ip      
+        self.parameters["spbill_create_ip"] = "47.104.184.45"  #终端ip      
         self.parameters["nonce_str"] = self.createNoncestr()  #随机字符串
         self.parameters["sign"] = self.getSign(self.parameters)  #签名
         return  self.arrayToXml(self.parameters)
