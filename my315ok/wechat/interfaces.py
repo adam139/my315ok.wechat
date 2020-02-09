@@ -135,6 +135,30 @@ class IwechatSettings(zope.interface.Interface):
                              title=_(u"app token"),
                              description=_(u"weixin app token"),
                              )
+    access_token = schema.ASCII(
+                             title=_(u"gongzhong hao access token"),
+                             description=_(u"gongzhong hao access token"),
+                             )
+    access_token_time = schema.Datetime(
+                             title=_(u"access token update time"),
+                             description=_(u"gongzhong hao access token update time"),
+                             )    
+    jsapi_access_token = schema.ASCII(
+                             title=_(u"jsapi access token"),
+                             description=_(u"jsapi web page authorized access token"),
+                             )
+    jsapi_ticket = schema.ASCII(
+                             title=_(u"jsapi ticket"),
+                             description=_(u"jsapi web page authorized access ticket"),
+                             )    
+    jsapi_ticket_time = schema.Datetime(
+                             title=_(u"jsapi ticket update time"),
+                             description=_(u"jsapi access ticket update time"),
+                             )
+    jsapi_access_token_time = schema.Datetime(
+                             title=_(u"access token update time"),
+                             description=_(u"jsapi access token update time"),
+                             )                    
     preview = schema.ASCIILine(
             title=_(u"Preview image URL"),
             required=False,

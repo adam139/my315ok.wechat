@@ -1,17 +1,21 @@
-from plone.z3cform import layout
-
 from plone.app.registry.browser.controlpanel import RegistryEditForm
 from plone.app.registry.browser.controlpanel import ControlPanelFormWrapper
 
 from my315ok.wechat.interfaces import IwechatSettings
 from my315ok.wechat import MessageFactory as _
-from z3c.form import form
+
 
 class ControlPanelForm(RegistryEditForm):
+    
     schema = IwechatSettings
-    form.extends(RegistryEditForm)
+    label =_(u"Wechat control panel") 
+    description = _(u"Wechat control panel")
     
-#    label = _(u"Wechat control panel")
+    def updateFields(self):
+        super(ControlPanelForm, self).updateFields()
+
     
-WechatControlPanelView = layout.wrap_form(ControlPanelForm, ControlPanelFormWrapper)
-WechatControlPanelView.label = _(u"Wechat control panel")
+class WechatControlPanel(ControlPanelFormWrapper):
+    form = ControlPanelForm
+
+

@@ -29,11 +29,11 @@
          dexterity.membrane.content.member.IMember"     
    		 />    		 
     
-  <!--    for="Products.CMFCore.interfaces.IContentish" Register the control panel for My315ok wechat settings -->
+  <!--Register the control panel for My315ok wechat settings -->
   <browser:page
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       name="my315okwechat-controlpanel"
-      class=".controlpanel.WechatControlPanelView"
+      class=".controlpanel.WechatControlPanel"
       permission="cmf.ManagePortal" 
       />    
   <genericsetup:registerProfile

@@ -25,7 +25,7 @@ setup(name='my315ok.wechat',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'WeRoBot=1.10.0',
+#           'WeRoBot=1.10.0',
           'plone.app.registry',           
           'plone.app.dexterity',
           'plone.directives.form',
