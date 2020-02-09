@@ -39,8 +39,8 @@ import random
 import hashlib
 from urllib import quote
 
-from .config import WxPayConf_pub
-from .lib import HttpClient, WeixinHelper
+from .config3 import WxPayConf_pub
+from .lib import HttpClient, CustomWeixinHelper
 
 
 ###############################支付接口############################
@@ -99,7 +99,7 @@ class Common_util_pub(object):
     def xmlToArray(self, xml):
         """将xml转为array"""
         
-        return WeixinHelper.xmlToArray(xml)
+        return CustomWeixinHelper.xmlToArray(xml)
 
     def postXmlCurl(self, xml, url, second=30):
         """以post方式提交xml到对应的接口url"""
@@ -230,7 +230,7 @@ class UnifiedOrder_pub(Wxpay_client_pub):
         """生成接口参数xml"""
         #检测必填参数
         self.parameters['out_trade_no'] = self.createNoncestr()
-        self.parameters['notify_url'] = "http://weixin.315ok.org/notify"
+        self.parameters['notify_url'] = "http://admin.315ok.org/notify"
         self.parameters['trade_type'] = "JSAPI"
     
         if any(self.parameters[key] is None for key in ("out_trade_no", "body", "total_fee", "notify_url", "trade_type")):
