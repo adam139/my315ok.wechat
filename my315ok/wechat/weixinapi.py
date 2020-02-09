@@ -31,9 +31,7 @@ appid = "wx2833460b1571bd01"
 appsecret = "7266d775b7661c4308b143c69d8eabc2"
 
 
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
-from my315ok.wechat.interfaces import IwechatSettings
+
 appid ="wx77d2f3625808f911"
 appsecret = "b66e860a24452f782dc40d3daab6a79a"
 
@@ -47,19 +45,8 @@ class Client(object):
     
     def __init__(self, context):
         self.cotext = context
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(IwechatSettings)
-
-        if settings.appid == None:
-            self.appid = appid
-        else:
-            self.appid = settings.appid
-        if settings.appsecret == None:
-            self.appsecret = appsecret
-        else:
-            self.appsecret = settings.appsecret
-#        self.appid = 'wx0ed81f0fc9784dde'
-#        self.appsecret = 'eadfe63cf63e8048913a334f8e960ff2'
+        self.appid = 'wx0ed81f0fc9784dde'
+        self.appsecret = 'eadfe63cf63e8048913a334f8e960ff2'
         self._token = None
         self.token_expires_at = None
 

@@ -3,11 +3,6 @@ from zope.component import getMultiAdapter
 from cStringIO import StringIO
 from PIL import Image
 import os
-
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
-from my315ok.wechat.interfaces import IwechatSettings
-
 from my315ok.wechat.weixinapi import check_error
 # from my315ok.wechat.tests.test_api import getFile
 def getFile(filename):
@@ -54,21 +49,21 @@ class Content(object):
             filename = open(imgfile,'r')
     
         except:  # if can't get image data,then use a  default image
-            registry = getUtility(IRegistry)
-            settings = registry.forInterface(IwechatSettings)
+#             registry = getUtility(IRegistry)
+#             settings = registry.forInterface(IwechatSettings)
             import urllib2
             if settings.preview == None:
                 filename = getFile("avatar_default.jpg")
-            else:
-                url = settings.preview
-                imgstr = urllib2.urlopen(url).read()
-                imgobj = Image.open(StringIO(imgstr))
-                suffix = (imgobj.format).lower()
-                filename = "news.%s" % suffix
-                imgfile = putFile(filename)
-                imgobj.save(imgfile)
-                del imgobj
-                filename = open(imgfile,'r')                
+#             else:
+#                 url = settings.preview
+#                 imgstr = urllib2.urlopen(url).read()
+#                 imgobj = Image.open(StringIO(imgstr))
+#                 suffix = (imgobj.format).lower()
+#                 filename = "news.%s" % suffix
+#                 imgfile = putFile(filename)
+#                 imgobj.save(imgfile)
+#                 del imgobj
+#                 filename = open(imgfile,'r')                
 
         try:
             rt = api.upload_media('image',filename)

@@ -29,13 +29,7 @@
          dexterity.membrane.content.member.IMember"     
    		 />    		 
     
-  <!--Register the control panel for My315ok wechat settings -->
-  <browser:page
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      name="my315okwechat-controlpanel"
-      class=".controlpanel.WechatControlPanel"
-      permission="cmf.ManagePortal" 
-      />    
+    
   <genericsetup:registerProfile
       name="default"
       title="my315ok.wechat"

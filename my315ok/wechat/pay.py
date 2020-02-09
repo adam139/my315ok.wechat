@@ -40,7 +40,7 @@ import hashlib
 from urllib import quote
 
 from .config3 import WxPayConf_pub
-from .lib import HttpClient, CustomWeixinHelper
+from .lib import HttpClient, WeixinHelper
 
 
 ###############################支付接口############################
@@ -99,7 +99,7 @@ class Common_util_pub(object):
     def xmlToArray(self, xml):
         """将xml转为array"""
         
-        return CustomWeixinHelper.xmlToArray(xml)
+        return WeixinHelper.xmlToArray(xml)
 
     def postXmlCurl(self, xml, url, second=30):
         """以post方式提交xml到对应的接口url"""
