@@ -32,7 +32,8 @@ Created on 2014-11-24
  *      postXmlSSLCurl(),使用证书，以post方式提交xml到对应的接口url
 
 """
-
+import logging
+logger = logging.getLogger("pay lib")
 import json
 import time
 import random
@@ -247,12 +248,13 @@ class UnifiedOrder_pub(Wxpay_client_pub):
 
     def getPrepayId(self,openid,body,total_fee):
         """获取prepay_id"""
+        logger.info ("openid:%s,body:%s,total_fee:%s" % (openid,body,total_fee))
         self.parameters['openid'] = openid
         self.parameters['body'] = body
         self.parameters['total_fee'] = total_fee
         self.postXml()
         self.result = self.xmlToArray(self.response)
-
+        logger.info ("getPrepayId result:%s" % self.response)
         prepay_id = self.result["prepay_id"]
         return prepay_id
 
