@@ -161,6 +161,7 @@ class JsApi_pub(Common_util_pub):
 
     def  getParameters(self,openid,body,total_fee):
         """设置jsapi的参数"""
+        logger.info("enter getParameters.openid is:%s" % openid)
         jsApiObj = {}
         jsApiObj["appId"] = WxPayConf_pub.APPID
         timeStamp = int(time.time())
