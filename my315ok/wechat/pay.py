@@ -40,7 +40,7 @@ import random
 import hashlib
 from urllib import quote
 
-from .config3 import WxPayConf_pub
+from xtcs.policy.config import ControlPanelConf_pub as WxPayConf_pub
 from .lib import HttpClient, WeixinHelper
 
 
