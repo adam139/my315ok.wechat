@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-
+from plone.registry.interfaces import IRegistry
+from xtcs.policy.browser.interfaces import IwechatSettings
+from zope.component import getUtility
 import imp
 
 class WxPayConf_pub(object):
@@ -32,6 +34,23 @@ class WxPayConf_pub(object):
 
     #=======【HTTP客户端设置】===================================
     HTTP_CLIENT = "CURL"  # ("URLLIB", "CURL", "REQUESTS")
+
+class ControlPanelConf_pub(WxPayConf_pub):
+    """read config from plone controlpanel"""
+    
+    def __init__(self):
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IwechatSettings)
+        prpty = [pt for pt in dir(self) if not pt.startswith('__')]
+
+        for prp in prpty:
+            tmp = getattr(settings,prp.lower(),"")
+            if bool(tmp): 
+                setattr(self,prp,tmp)
+                continue
+            else:
+                continue
+
 
 class ConfigAttribute(object):
     """

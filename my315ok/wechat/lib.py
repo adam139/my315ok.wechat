@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 
 from functools import wraps
 
-from xtcs.policy.config import ControlPanelConf_pub as WxPayConf_pub
+from my315ok.wechat.config import ControlPanelConf_pub as WxPayConf_pub
 
 try:
     import pycurl
