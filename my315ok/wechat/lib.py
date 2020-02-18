@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 
 from functools import wraps
 
-from my315ok.wechat.config import ControlPanelConf_pub as WxPayConf_pub
+from my315ok.wechat.config import ControlPanelConf_pub  #WxPayConf_pub
 
 try:
     import pycurl
@@ -140,9 +140,9 @@ class CurlClient(BaseHttpClient):
         #默认格式为PEM，可以注释
         if cert:
             self.curl.setopt(pycurl.SSLKEYTYPE, "PEM")
-            self.curl.setopt(pycurl.SSLKEY, WxPayConf_pub.SSLKEY_PATH)
+            self.curl.setopt(pycurl.SSLKEY, ControlPanelConf_pub().SSLKEY_PATH)
             self.curl.setopt(pycurl.SSLCERTTYPE, "PEM")
-            self.curl.setopt(pycurl.SSLCERT, WxPayConf_pub.SSLCERT_PATH)
+            self.curl.setopt(pycurl.SSLCERT, ControlPanelConf_pub().SSLCERT_PATH)
         #post提交方式
         if post:
             self.curl.setopt(pycurl.POST, True)
@@ -159,7 +159,7 @@ class RequestsClient(BaseHttpClient):
 
     def postXmlSSL(self, xml, url, second=30, cert=True, post=True):
         if cert:
-            cert_config = (WxPayConf_pub.SSLCERT_PATH, WxPayConf_pub.SSLKEY_PATH)
+            cert_config = (ControlPanelConf_pub().SSLCERT_PATH, ControlPanelConf_pub().SSLKEY_PATH)
         else:
             cert_config = None
         if post:
@@ -171,7 +171,7 @@ class RequestsClient(BaseHttpClient):
 class HttpClient(Singleton, BaseHttpClient):
     @classmethod
     def configure(cls):
-        config_client =  WxPayConf_pub.HTTP_CLIENT
+        config_client =  ControlPanelConf_pub().HTTP_CLIENT
         client_cls = {"urllib": UrllibClient,
                       "curl": CurlClient,
                       "requests": RequestsClient}.get(config_client.lower(), None)
@@ -193,7 +193,7 @@ class WeixinHelper(object):
     @classmethod
     def checkSignature(cls, signature, timestamp, nonce):
         """微信对接签名校验"""
-        tmp = [WxPayConf_pub.TOKEN, timestamp, nonce]
+        tmp = [ControlPanelConf_pub().TOKEN, timestamp, nonce]
         tmp.sort()
         code = hashlib.sha1("".join(tmp)).hexdigest()
         return code == signature
@@ -214,7 +214,7 @@ class WeixinHelper(object):
         http://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
         """
         _OAUTH_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=code&scope={2}&state={3}#wechat_redirect"
-        return _OAUTH_URL.format(WxPayConf_pub.APPID, urllib.quote(redirect_uri), scope, state)
+        return _OAUTH_URL.format(ControlPanelConf_pub().APPID, urllib.quote(redirect_uri), scope, state)
 
     @classmethod
     def getAccessToken(cls):
@@ -223,7 +223,7 @@ class WeixinHelper(object):
         http://mp.weixin.qq.com/wiki/11/0e4b294685f817b95cbed85ba5e82b8f.html
         """
         _ACCESS_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}"
-        return HttpClient().get(_ACCESS_URL.format(WxPayConf_pub.APPID, WxPayConf_pub.APPSECRET))
+        return HttpClient().get(_ACCESS_URL.format(ControlPanelConf_pub().APPID, ControlPanelConf_pub().APPSECRET))
 
 
     @classmethod
@@ -240,7 +240,7 @@ class WeixinHelper(object):
         http://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
         """
         _CODEACCESS_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code"
-        return HttpClient().get(_CODEACCESS_URL.format(WxPayConf_pub.APPID, WxPayConf_pub.APPSECRET, code))
+        return HttpClient().get(_CODEACCESS_URL.format(ControlPanelConf_pub().APPID, ControlPanelConf_pub().APPSECRET, code))
 
     @classmethod
     def refreshAccessToken(cls, refresh_token):
@@ -248,7 +248,7 @@ class WeixinHelper(object):
         http://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
         """
         _REFRESHTOKRN_URL = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid={0}&grant_type=refresh_token&refresh_token={1}"
-        return HttpClient().get(_REFRESHTOKRN_URL.format(WxPayConf_pub.APPID, refresh_token))
+        return HttpClient().get(_REFRESHTOKRN_URL.format(ControlPanelConf_pub().APPID, refresh_token))
 
 
     @classmethod
